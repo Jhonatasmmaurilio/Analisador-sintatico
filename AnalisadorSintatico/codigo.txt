@@ -1,0 +1,6 @@
+PROGRAM ;
+VAR
+a :INTEGER;
+BEGIN
+	READLN(a)
+END.
