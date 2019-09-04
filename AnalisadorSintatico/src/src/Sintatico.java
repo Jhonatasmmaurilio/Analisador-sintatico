@@ -1,6 +1,9 @@
 package src;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
+
+import javafx.scene.control.Label;
 
 public class Sintatico {
 	private Lexico listaTokens;
@@ -8,21 +11,47 @@ public class Sintatico {
 	private boolean compilado = false;
 	private Token tokenAtual;
 	private Token tokenAnterior;
+	private Label lt;
+	private Label ll;
+	private Label le;
+	private String listaT = "";
+	private String listaL = "";
+	private String listaE = "";
 
-	public void inicialisar(Lexico lexico) throws SintaticoException {
+	public void mensagens(String tipo,String msg) {
+		
+		if(tipo.equals("t")) {
+			this.listaT += msg + "\n";
+			this.lt.setText(this.listaT);
+		}else if(tipo.equals("l")) {
+			this.listaL += msg + "\n";
+			System.out.println(this.listaL);
+			this.ll.setText(this.listaL);
+		}else {
+			this.listaE += msg + "\n";
+			this.le.setText(this.listaE);
+		}
+	}
+	public void inicialisar(Lexico lexico, Label lt, Label ll, Label le) throws SintaticoException {
 		this.listaTokens = lexico;
-
+		this.lt = lt;
+		this.ll = ll;
+		this.le = le;
+		
 		pilha.clear();
 		pilha.push(Constants.DOLLAR);
 		pilha.push(Constants.START_SYMBOL);
 
+		String p = "PILHA: " + pilha;
+		mensagens("l", p);
+		
 		try {
 			tokenAtual = lexico.nextToken();
+			mensagens("l",tokenAtual.toString());
+			
 		} catch (LexicalError e) {
 			System.err.println(e.getMessage() + "e;, em " + e.getPosition());
 		}
-
-		System.out.println("PILHA: " + pilha);
 
 		while (!analise());
 
@@ -71,6 +100,8 @@ public class Sintatico {
 					try {
 						tokenAnterior = tokenAtual;
 						tokenAtual = listaTokens.nextToken();
+						
+						mensagens("t",tokenAtual.toString());
 						System.out.println("Novo token chamado: " + tokenAtual);
 						System.out.println("Resetando analise...");
 						System.out.println("-----------------------");

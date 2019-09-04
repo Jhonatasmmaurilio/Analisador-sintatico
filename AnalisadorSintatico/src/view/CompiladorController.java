@@ -13,11 +13,13 @@ import javax.swing.filechooser.FileSystemView;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import src.Lexico;
 import src.Sintatico;
 import src.SintaticoException;
-import src.Token;
 
 public class CompiladorController {
 	@FXML
@@ -34,6 +36,27 @@ public class CompiladorController {
 
 	@FXML
 	private Button gerarCodigo03;
+
+	@FXML
+	private Button btnCompilar;
+
+	@FXML
+	private Button btnLimpar;
+
+	@FXML
+	private Pane areaOutput;
+
+	@FXML
+	private Label outputTokens;
+
+	@FXML
+	private Label outputLog;
+
+	@FXML
+	private Label outputErros;
+
+	Lexico lexico = new Lexico();
+	Sintatico sintatico = new Sintatico();
 
 	public void selecionarArqAction(ActionEvent event) {
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -89,43 +112,41 @@ public class CompiladorController {
 	public void gerarCodigo01Action(ActionEvent event) {
 		getCodigo(1);
 	}
-	
+
 	public void gerarCodigo02Action(ActionEvent event) {
 		getCodigo(2);
 	}
-	
+
 	public void gerarCodigo03Action(ActionEvent event) {
 		getCodigo(3);
 	}
-	
+
 	public void getCodigo(int num) {
 		String arquivo = "codigos/codigo-01.txt";
-		
-		if(num == 1) {
+
+		if (num == 1) {
 			arquivo = "codigos/codigo-01.txt";
-		}else if(num == 2) {
+		} else if (num == 2) {
 			arquivo = "codigos/codigo-02.txt";
-		}else {
+		} else {
 			arquivo = "codigos/codigo-03.txt";
 		}
-		
+
 		try {
 			BufferedReader reader;
 			StringBuilder sb = new StringBuilder();
 			reader = new BufferedReader(new FileReader(arquivo));
-			
-			String linha = reader.readLine();
-			String codigo = linha + "\n";
-			
-			while (linha != null) {
-				linha = reader.readLine();
 
-				if (linha != null) {
-					codigo += linha + "\n";
-				}
+			String linha = reader.readLine();
+			String codigo = "";
+
+			while (linha != null) {
+				codigo += linha + "\n";
+				linha = reader.readLine();
 			}
-			
+
 			areaCodigo.setText(codigo);
+
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
@@ -133,30 +154,31 @@ public class CompiladorController {
 		}
 	}
 
-	public void Compilar() throws SintaticoException {
+	@FXML
+	void Compilar(ActionEvent event) {
 		Lexico lexico = new Lexico();
 		Sintatico sintatico = new Sintatico();
 
-		String caminhoArquivo = "codigo.txt";
 		String linha = "";
+		String codigo = "";
 		int i = 0;
 
 		try {
-			BufferedReader br = new BufferedReader(new FileReader(caminhoArquivo));
-			i = 1;
+			codigo = areaCodigo.getText();
 
-			try {
-				lexico.setInput(br);
-
-				Token token = null;
-				sintatico.inicialisar(lexico);
-
-				br.close();
-			} catch (IOException ex) {
-				System.out.println("Erro: não foi possível ler o arquivo");
+			if (codigo != null || codigo != "") {
+				lexico.setInput(codigo);
+				sintatico.inicialisar(lexico, outputTokens, outputLog, outputErros);
+			} else {
+//				outputErros.setText("Insira um código no campo acima antes de compilar");
 			}
-		} catch (FileNotFoundException ex) {
-			System.out.println("Erro: Arquivo não encontrado!");
+		} catch (SintaticoException e) {
+			System.out.println("erro sintatico");
 		}
+	}
+
+	@FXML
+	void LimparAction(ActionEvent event) {
+		areaCodigo.setText(null);
 	}
 }

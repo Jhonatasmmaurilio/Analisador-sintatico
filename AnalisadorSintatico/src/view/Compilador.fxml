@@ -51,12 +51,7 @@
                <children>
                   <VBox alignment="CENTER" prefHeight="405.0" prefWidth="774.0">
                      <children>
-                        <TextArea fx:id="areaCodigo" prefHeight="282.0" prefWidth="689.0">
-                           <VBox.margin>
-                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                           </VBox.margin>
-                        </TextArea>
-                        <HBox prefHeight="41.0" prefWidth="604.0" spacing="10.0">
+                        <HBox prefHeight="43.0" prefWidth="182.0" spacing="10.0">
                            <children>
                               <Label prefHeight="17.0" prefWidth="76.0" text="Gerar Código">
                                  <HBox.margin>
@@ -80,10 +75,33 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Button>
-                              <HBox alignment="TOP_RIGHT" prefHeight="41.0" prefWidth="477.0" spacing="20.0">
+                              <HBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="474.0">
+                                 <children>
+                                    <Button fx:id="btnLimpar" mnemonicParsing="false" onAction="#LimparAction" prefHeight="36.0" prefWidth="86.0" text="Limpar">
+                                       <font>
+                                          <Font name="System Bold" size="12.0" />
+                                       </font></Button>
+                                 </children>
+                              </HBox>
+                           </children>
+                           <padding>
+                              <Insets left="20.0" />
+                           </padding>
+                           <VBox.margin>
+                              <Insets right="20.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <TextArea fx:id="areaCodigo" prefHeight="282.0" prefWidth="689.0">
+                           <VBox.margin>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </VBox.margin>
+                        </TextArea>
+                        <HBox prefHeight="41.0" prefWidth="664.0" spacing="10.0">
+                           <children>
+                              <HBox prefHeight="41.0" prefWidth="477.0" spacing="20.0">
                                  <children>
                                     <Button fx:id="selecionarArquivo" mnemonicParsing="false" onAction="#selecionarArqAction" prefHeight="40.0" prefWidth="126.0" style="-fx-background-color: #607d8b;" text="Selecionar Arquivo" textFill="WHITE" />
-                                    <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="147.0" style="-fx-background-color: #0091ea;" text="Compilar" textFill="WHITE">
+                                    <Button fx:id="btnCompilar" mnemonicParsing="false" onAction="#Compilar" prefHeight="40.0" prefWidth="147.0" style="-fx-background-color: #0091ea;" text="Compilar" textFill="WHITE">
                                        <font>
                                           <Font name="System Bold" size="12.0" />
                                        </font></Button>
@@ -94,12 +112,12 @@
                               <Insets />
                            </opaqueInsets>
                            <VBox.margin>
-                              <Insets left="20.0" />
+                              <Insets left="20.0" right="20.0" />
                            </VBox.margin>
                         </HBox>
                      </children>
                   </VBox>
-                  <VBox prefHeight="309.0" prefWidth="506.0">
+                  <VBox prefHeight="404.0" prefWidth="402.0">
                      <children>
                         <Label text="Tokens Encontrados">
                            <font>
@@ -109,9 +127,9 @@
                               <Insets bottom="20.0" />
                            </VBox.margin>
                         </Label>
-                        <Pane prefHeight="271.0" prefWidth="439.0" style="-fx-background-color: #f4f4f4;">
+                        <Pane prefHeight="271.0" prefWidth="403.0" style="-fx-background-color: #ffffff;">
                            <children>
-                              <Label text="Aguardando...">
+                              <Label fx:id="outputTokens" text="Aguardando...">
                                  <padding>
                                     <Insets left="10.0" top="10.0" />
                                  </padding>
@@ -121,7 +139,7 @@
                               <Insets />
                            </opaqueInsets>
                            <VBox.margin>
-                              <Insets right="20.0" />
+                              <Insets right="20.0" top="20.0" />
                            </VBox.margin>
                         </Pane>
                      </children>
@@ -131,26 +149,56 @@
                   </VBox>
                </children>
             </HBox>
-            <VBox prefHeight="200.0" prefWidth="100.0" GridPane.rowIndex="2">
+            <HBox prefHeight="100.0" prefWidth="200.0" GridPane.rowIndex="2">
                <children>
-                  <Label text="Output">
-                     <font>
-                        <Font name="System Bold" size="12.0" />
-                     </font>
-                     <VBox.margin>
-                        <Insets left="20.0" top="30.0" />
-                     </VBox.margin>
-                     <padding>
-                        <Insets bottom="20.0" />
-                     </padding>
-                  </Label>
-                  <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #f4f4f4;">
-                     <VBox.margin>
-                        <Insets bottom="20.0" left="20.0" right="20.0" />
-                     </VBox.margin>
-                  </Pane>
+                  <VBox prefHeight="188.0" prefWidth="562.0">
+                     <children>
+                        <Label prefHeight="21.0" prefWidth="98.0" text="Output">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="20.0" top="20.0" />
+                           </VBox.margin>
+                           <padding>
+                              <Insets bottom="20.0" />
+                           </padding>
+                        </Label>
+                        <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;">
+                           <VBox.margin>
+                              <Insets bottom="20.0" left="20.0" right="20.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label fx:id="outupErros" text="Aguardando..." />
+                           </children>
+                        </Pane>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="188.0" prefWidth="601.0">
+                     <children>
+                        <Label text="Log">
+                           <padding>
+                              <Insets top="20.0" />
+                           </padding>
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                           <VBox.margin>
+                              <Insets left="20.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Pane fx:id="outputLogs" prefHeight="200.0" prefWidth="200.0" style="-fx-background-color: #ffffff;">
+                           <VBox.margin>
+                              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+                           </VBox.margin>
+                           <children>
+                              <Label fx:id="outputLogs" />
+                           </children>
+                        </Pane>
+                     </children>
+                  </VBox>
                </children>
-            </VBox>
+            </HBox>
          </children>
       </GridPane>
    </children>
