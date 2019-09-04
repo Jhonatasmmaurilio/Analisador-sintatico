@@ -50,13 +50,15 @@ public class CompiladorController {
 	private Label outputTokens;
 
 	@FXML
-	private Label outputLog;
+	private Label outputErros;
 
 	@FXML
-	private Label outputErros;
+	private Label outputLogs;
 
 	Lexico lexico = new Lexico();
 	Sintatico sintatico = new Sintatico();
+	
+	private String msgErro = "";
 
 	public void selecionarArqAction(ActionEvent event) {
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -156,6 +158,10 @@ public class CompiladorController {
 
 	@FXML
 	void Compilar(ActionEvent event) {
+		this.outputErros.setText(null);
+		this.outputLogs.setText(null);
+		this.outputTokens.setText(null);
+		
 		Lexico lexico = new Lexico();
 		Sintatico sintatico = new Sintatico();
 
@@ -167,13 +173,13 @@ public class CompiladorController {
 			codigo = areaCodigo.getText();
 
 			if (codigo != null || codigo != "") {
-				lexico.setInput(codigo);
-				sintatico.inicialisar(lexico, outputTokens, outputLog, outputErros);
+				lexico.setInput(codigo.toUpperCase());
+				sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
 			} else {
-//				outputErros.setText("Insira um código no campo acima antes de compilar");
+				outputErros.setText("insira um código no campo acima!");
 			}
 		} catch (SintaticoException e) {
-			System.out.println("erro sintatico");
+			e.printStackTrace();
 		}
 	}
 
