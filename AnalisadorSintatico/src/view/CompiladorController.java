@@ -172,11 +172,11 @@ public class CompiladorController {
 		try {
 			codigo = areaCodigo.getText();
 
-			if (codigo != null || codigo != "") {
+			if (!codigo.isEmpty()) {
 				lexico.setInput(codigo.toUpperCase());
 				sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
 			} else {
-				outputErros.setText("insira um código no campo acima!");
+				outputErros.setText("INSIRA UM CÓDIGO NO CAMPO ACIMA!");
 			}
 		} catch (SintaticoException e) {
 			e.printStackTrace();

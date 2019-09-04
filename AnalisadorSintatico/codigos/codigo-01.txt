@@ -14,7 +14,7 @@ BEGIN
 	ELSE
 	
 	BEGIN
-		Z:=Z-X;
+		Z:=Z - X;
 		CALL P;
 	END;
 END;
@@ -22,6 +22,7 @@ END;
 BEGIN
 	Z:=0;
 	READLN(X,Y);
+	
 	IF X>Y THEN
 		CALL P
 	ELSE

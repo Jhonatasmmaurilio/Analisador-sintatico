@@ -26,7 +26,6 @@ public class Sintatico {
 		} else if (tipo.equals("l")) {
 			this.listaL += msg + "\n";
 			this.ll.setText(this.listaL);
-//			System.out.println(this.listaL);
 		} else {
 			this.listaE += msg + "\n";
 			this.le.setText(this.listaE);
