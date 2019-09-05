@@ -1,11 +1,9 @@
 package src;
 public class SintaticoException extends Exception {
 	private String msg = "";
-	private int posicao;
 
-	public SintaticoException(String msg, int pos) {
+	public SintaticoException(String msg) {
 		this.msg = msg;
-		this.posicao = pos;
 	}
 	
 	@Override

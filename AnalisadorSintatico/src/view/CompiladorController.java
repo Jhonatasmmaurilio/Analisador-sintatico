@@ -166,7 +166,7 @@ public class CompiladorController {
 	}
 
 	@FXML
-	void Compilar(ActionEvent event) {
+	void Compilar(ActionEvent event) throws SintaticoException {
 		this.outputErros.setText(null);
 		this.outputLogs.setText(null);
 		this.outputTokens.setText(null);
@@ -178,17 +178,13 @@ public class CompiladorController {
 		String codigo = "";
 		int i = 0;
 
-		try {
-			codigo = areaCodigo.getText();
+		codigo = areaCodigo.getText();
 
-			if (!codigo.isEmpty()) {
-				lexico.setInput(codigo.toUpperCase());
-				sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
-			} else {
-				outputErros.setText("INSIRA UM CÓDIGO NO CAMPO ACIMA!");
-			}
-		} catch (SintaticoException e) {
-			e.printStackTrace();
+		if (!codigo.isEmpty()) {
+			lexico.setInput(codigo.toUpperCase());
+			sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
+		} else {
+			outputErros.setText("INSIRA UM CÓDIGO NO CAMPO ACIMA!");
 		}
 	}
 

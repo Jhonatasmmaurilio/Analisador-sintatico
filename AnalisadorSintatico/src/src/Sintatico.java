@@ -32,15 +32,15 @@ public class Sintatico {
 		}
 	}
 
-	public void inicialisar(Lexico lexico, Label lt, Label ll, Label le) throws SintaticoException {
+	public void inicialisar(Lexico lexico, Label lt, Label ll, Label le) {
 		this.listaTokens = lexico;
 		this.lt = lt;
 		this.ll = ll;
 		this.le = le;
+		boolean erros = true;
 
-		pilha.clear();
 		pilha.push(Constants.DOLLAR);
-		pilha.push(Constants.START_SYMBOL);
+		pilha.push(Constants.FIRST_NON_TERMINAL);
 
 		String p = "PILHA: " + pilha;
 		mensagens("l", p);
@@ -54,8 +54,12 @@ public class Sintatico {
 			mensagens("e", "Erro Lexico: " + e.getMessage() + ", em " + e.getPosition());
 		}
 
-		while (!analise())
-			;
+		try {
+			while (!analise())
+				;
+		} catch (SintaticoException e) {
+			e.printStackTrace();
+		}
 
 		if (compilado) {
 			mensagens("l", "COMPILADO COM SUCESSO");
@@ -69,14 +73,11 @@ public class Sintatico {
 
 		if (tokenAtual == null) {
 			mensagens("l", "Token atual é igual a null");
-			int pos = 0;
-			if (tokenAnterior != null) {
-				pos = tokenAnterior.getPosition() + tokenAnterior.getLexeme().length();
-			}
-			tokenAtual = new Token(Constants.DOLLAR, "$", pos);
+
+			tokenAtual = new Token(Constants.DOLLAR, "$", 1);
 		}
 
-		x = (Integer) (pilha.pop());
+		x = (Integer) pilha.pop();
 		a = tokenAtual.getId();
 		Lexico t;
 
@@ -84,65 +85,46 @@ public class Sintatico {
 		mensagens("l", "PILHA: " + pilha);
 		mensagens("l", ">Token atual é:" + tokenAtual);
 
-		if (x == Constants.EPSILON) {
-			mensagens("l", "token [" + x + "] da pilha" + " - é igual a " + Constants.EPSILON);
-			mensagens("l", "Resetando analise...");
-			mensagens("l", "-----------------------");
-
-			return false;
-		} else if (terminal(x)) {
-			mensagens("l", "Token [" + x + "] da pilha é terminal");
-
-			if (x == a) {
-				mensagens("l", "Token [" + x + "] " + "da pilha é igual ao token atual: " + a);
-
-				if (pilha.empty()) {
-					mensagens("l", "Pilha está vazia");
-
-					compilado = true;
-					return true;
-				} else {
-					try {
-						tokenAnterior = tokenAtual;
-						tokenAtual = listaTokens.nextToken();
-						
-						if(tokenAtual != null) {
-							String ta = tokenAtual.toString();
-							System.out.println(ta);
-							mensagens("t", ta);
-						}
-
-						mensagens("l", "Novo token chamado: " + tokenAtual);
-						mensagens("l", "Resetando analise...");
-						mensagens("l", "-----------------------");
-					} catch (LexicalError e) {
-						mensagens("l", "Erro Lexico: " + e.getMessage() + "e;, em " + e.getPosition());
-						mensagens("e", "Erro Lexico: " + e.getMessage() + "e;, em " + e.getPosition());
-						return true;
-					}
-
-					return false;
-				}
-			} else {
-				mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
-				mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
-				throw new SintaticoException(ParserConstants.PARSER_ERROR[x], tokenAtual.getPosition());
-			}
-		} else if (naoTerminal(x)) {
-			mensagens("l", x + " - é um não terminal");
-
-			if (consultaProducoes(x, a)) {
+		if (pilha.size() != 0) {
+			if (x == 0) {
+				mensagens("l", "token [" + x + "] da pilha" + " - é cadeia vazia");
 				mensagens("l", "Resetando analise...");
 				mensagens("l", "-----------------------");
 
 				return false;
+			} else if (terminal(x)) {
+				mensagens("l", "Token [" + x + "] da pilha é terminal");
+
+				if (x == a) {
+					mensagens("l", "Token [" + x + "] " + "da pilha é igual ao token atual: " + a);
+
+					return (comparaTokens(x, a));
+				} else {
+					mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+					mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+					throw new SintaticoException(ParserConstants.PARSER_ERROR[x]);
+				}
+			} else if (naoTerminal(x)) {
+				mensagens("l", x + " - é um não terminal");
+
+				if (consultaProducoes(x, a)) {
+					mensagens("l", "Resetando analise...");
+					mensagens("l", "-----------------------");
+
+					return false;
+				} else {
+					mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+					mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+					throw new SintaticoException(ParserConstants.PARSER_ERROR[x]);
+				}
 			} else {
-				mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
-				mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
-				throw new SintaticoException(ParserConstants.PARSER_ERROR[x], tokenAtual.getPosition());
+				return false;
 			}
 		} else {
-			return false;
+			mensagens("l", "Pilha está vazia");
+
+			compilado = true;
+			return true;
 		}
 	}
 
@@ -158,9 +140,9 @@ public class Sintatico {
 		int pos, tamanho;
 		int[] producao;
 
-		pos = ParserConstants.PARSER_TABLE[topoDaPilha - ParserConstants.FIRST_NON_TERMINAL][tokenAtual - 1];
+		pos = ParserConstants.PARSER_TABLE[topoDaPilha - Constants.FIRST_NON_TERMINAL][tokenAtual - 1];
 
-		mensagens("l", "Posição da regra: " + "{" + (topoDaPilha - ParserConstants.FIRST_NON_TERMINAL) + ","
+		mensagens("l", "Posição da regra: " + "{" + (topoDaPilha - Constants.FIRST_NON_TERMINAL) + ","
 				+ (tokenAtual - 1) + "}");
 
 		if (pos >= 0) {
@@ -183,5 +165,27 @@ public class Sintatico {
 
 			return false;
 		}
+	}
+
+	private boolean comparaTokens(int x, int a) {
+		try {
+			tokenAnterior = tokenAtual;
+			tokenAtual = listaTokens.nextToken();
+
+			if (tokenAtual != null) {
+				String ta = tokenAtual.toString();
+				mensagens("t", ta);
+			}
+
+			mensagens("l", "Novo token chamado: " + tokenAtual);
+			mensagens("l", "Resetando analise...");
+			mensagens("l", "-----------------------");
+		} catch (LexicalError e) {
+			mensagens("l", "Erro Lexico: " + e.getMessage() + "e, em " + e.getPosition());
+			mensagens("e", "Erro Lexico: " + e.getMessage() + "e, em " + e.getPosition());
+			return true;
+		}
+
+		return false;
 	}
 }
