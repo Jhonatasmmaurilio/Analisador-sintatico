@@ -42,10 +42,3 @@ PROCEDURE P;
 			END;
 		WRITELN("TUDO OK – BOAS FÉRIAS");
 END.
-
-//program teste;
-//var
-//a :integer;
-//begin
-//	readln(a)
-//end.

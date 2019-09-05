@@ -57,8 +57,7 @@ public class Lexico implements Constants {
 			return nextToken();
 		else {
 			String lexeme = input.substring(start, end);
-			Token t = new Token(token, lexeme, start);
-			return t;
+			return new Token(token, lexeme, start);
 		}
 	}
 

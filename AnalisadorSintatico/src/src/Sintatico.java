@@ -33,7 +33,6 @@ public class Sintatico {
 	}
 
 	public void inicialisar(Lexico lexico, Label lt, Label ll, Label le) throws SintaticoException {
-
 		this.listaTokens = lexico;
 		this.lt = lt;
 		this.ll = ll;
@@ -51,13 +50,15 @@ public class Sintatico {
 			mensagens("t", tokenAtual.toString());
 
 		} catch (LexicalError e) {
-			mensagens("e", e.getMessage() + "e;, em " + e.getPosition());
+			mensagens("l", "Erro Lexico: " + e.getMessage() + ", em " + e.getPosition());
+			mensagens("e", "Erro Lexico: " + e.getMessage() + ", em " + e.getPosition());
 		}
 
 		while (!analise())
 			;
 
 		if (compilado) {
+			mensagens("l", "COMPILADO COM SUCESSO");
 			mensagens("e", "COMPILADO COM SUCESSO");
 		}
 	}
@@ -67,6 +68,7 @@ public class Sintatico {
 		mensagens("l", "Token atual: " + tokenAtual);
 
 		if (tokenAtual == null) {
+			mensagens("l", "Token atual é igual a null");
 			int pos = 0;
 			if (tokenAnterior != null) {
 				pos = tokenAnterior.getPosition() + tokenAnterior.getLexeme().length();
@@ -114,14 +116,16 @@ public class Sintatico {
 						mensagens("l", "Resetando analise...");
 						mensagens("l", "-----------------------");
 					} catch (LexicalError e) {
-						mensagens("e", e.getMessage() + "e;, em " + e.getPosition());
+						mensagens("l", "Erro Lexico: " + e.getMessage() + "e;, em " + e.getPosition());
+						mensagens("e", "Erro Lexico: " + e.getMessage() + "e;, em " + e.getPosition());
 						return true;
 					}
 
 					return false;
 				}
 			} else {
-				mensagens("e", ParserConstants.PARSER_ERROR[x]);
+				mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+				mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
 				throw new SintaticoException(ParserConstants.PARSER_ERROR[x], tokenAtual.getPosition());
 			}
 		} else if (naoTerminal(x)) {
@@ -133,7 +137,8 @@ public class Sintatico {
 
 				return false;
 			} else {
-				mensagens("e", ParserConstants.PARSER_ERROR[x]);
+				mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+				mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
 				throw new SintaticoException(ParserConstants.PARSER_ERROR[x], tokenAtual.getPosition());
 			}
 		} else {

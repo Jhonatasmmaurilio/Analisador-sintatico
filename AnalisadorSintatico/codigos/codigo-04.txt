@@ -1,0 +1,6 @@
+program teste;
+var
+a :integer;
+begin
+	writeln("123a%$&¨@*#")
+end.

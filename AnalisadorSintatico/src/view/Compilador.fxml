@@ -69,6 +69,11 @@
                                     <Font name="System Bold" size="12.0" />
                                  </font>
                               </Button>
+                              <Button fx:id="gerarCodigo04" mnemonicParsing="false" onAction="#gerarCodigo04Action" prefHeight="40.0" prefWidth="33.0" style="-fx-background-color: #607d8b;" text="4" textFill="WHITE">
+                                 <font>
+                                    <Font name="System Bold" size="12.0" />
+                                 </font>
+                              </Button>
                               <HBox alignment="CENTER_RIGHT" prefHeight="43.0" prefWidth="474.0">
                                  <children>
                                     <Button fx:id="btnLimpar" mnemonicParsing="false" onAction="#LimparAction" prefHeight="36.0" prefWidth="86.0" text="Limpar">

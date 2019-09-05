@@ -36,6 +36,9 @@ public class CompiladorController {
 
 	@FXML
 	private Button gerarCodigo03;
+	
+	@FXML
+	private Button gerarCodigo04;
 
 	@FXML
 	private Button btnCompilar;
@@ -122,6 +125,10 @@ public class CompiladorController {
 	public void gerarCodigo03Action(ActionEvent event) {
 		getCodigo(3);
 	}
+	
+	public void gerarCodigo04Action(ActionEvent event) {
+		getCodigo(4);
+	}
 
 	public void getCodigo(int num) {
 		String arquivo = "codigos/codigo-01.txt";
@@ -130,8 +137,10 @@ public class CompiladorController {
 			arquivo = "codigos/codigo-01.txt";
 		} else if (num == 2) {
 			arquivo = "codigos/codigo-02.txt";
-		} else {
+		} else if (num == 3) {
 			arquivo = "codigos/codigo-03.txt";
+		} else {
+			arquivo = "codigos/codigo-04.txt";
 		}
 
 		try {
