@@ -2,5 +2,11 @@ program teste;
 var
 a :integer;
 begin
-	writeln("123a%$&¨@*#")
+	writeln("123a%$&¨@*#");
+	
+	WHILE X>Y DO
+		BEGIN CALL P;
+			READLN(X,Y)
+		END;
+	WRITELN("TUDO OK - BOAS FÉRIAS");
 end.

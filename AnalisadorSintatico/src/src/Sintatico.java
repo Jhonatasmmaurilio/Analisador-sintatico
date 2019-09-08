@@ -18,6 +18,7 @@ public class Sintatico {
 	private String listaT = "";
 	private String listaL = "";
 	private String listaE = "";
+	boolean erro = false;
 
 	public void mensagens(String tipo, String msg) {
 		if (tipo.equals("t")) {
@@ -37,29 +38,28 @@ public class Sintatico {
 		this.lt = lt;
 		this.ll = ll;
 		this.le = le;
-		boolean erros = true;
-
-		pilha.push(Constants.DOLLAR);
-		pilha.push(Constants.FIRST_NON_TERMINAL);
-
-		String p = "PILHA: " + pilha;
-		mensagens("l", p);
 
 		try {
 			tokenAtual = lexico.nextToken();
-			mensagens("t", tokenAtual.toString());
+			mensagens("t", tokenAtual.toString() + " - " + getNomeToken(tokenAtual.getId()));
+			
+			pilha.push(Constants.DOLLAR);
+			pilha.push(Constants.FIRST_NON_TERMINAL);
+
+			mensagens("l", "PILHA: " + pilha);
 
 		} catch (LexicalError e) {
 			mensagens("l", "Erro Lexico: " + e.getMessage() + ", em " + e.getPosition());
 			mensagens("e", "Erro Lexico: " + e.getMessage() + ", em " + e.getPosition());
 		}
 
-		try {
-			while (!analise())
-				;
-		} catch (SintaticoException e) {
-			e.printStackTrace();
-		}
+		do {
+			try {
+				analise();
+			} catch (SintaticoException e) {
+				e.printStackTrace();
+			}
+		} while (!erro);
 
 		if (compilado) {
 			mensagens("l", "COMPILADO COM SUCESSO");
@@ -67,7 +67,7 @@ public class Sintatico {
 		}
 	}
 
-	public boolean analise() throws SintaticoException {
+	public void analise() throws SintaticoException {
 		int x, a;
 		mensagens("l", "Token atual: " + tokenAtual);
 
@@ -77,76 +77,72 @@ public class Sintatico {
 			tokenAtual = new Token(Constants.DOLLAR, "$", 1);
 		}
 
-		x = (Integer) pilha.pop();
-		a = tokenAtual.getId();
-		Lexico t;
-
-		mensagens("l", ">Token removido do topo da pilha:" + x);
-		mensagens("l", "PILHA: " + pilha);
-		mensagens("l", ">Token atual é:" + tokenAtual);
-
 		if (pilha.size() != 0) {
+			x = (Integer) pilha.pop();
+			a = tokenAtual.getId();
+			Lexico t;
+
+			mensagens("l", ">Token removido do topo da pilha:" + x);
+			mensagens("l", "PILHA: " + pilha);
+			mensagens("l", ">Token atual é:" + tokenAtual);
+			
 			if (x == 0) {
 				mensagens("l", "token [" + x + "] da pilha" + " - é cadeia vazia");
 				mensagens("l", "Resetando analise...");
 				mensagens("l", "-----------------------");
 
-				return false;
-			} else if (terminal(x)) {
-				mensagens("l", "Token [" + x + "] da pilha é terminal");
+				this.erro = false;
+			} else if (x < Constants.FIRST_NON_TERMINAL) {
+				mensagens("l", "Token [" + x + "] da pilha é Terminal");
 
 				if (x == a) {
 					mensagens("l", "Token [" + x + "] " + "da pilha é igual ao token atual: " + a);
 
-					return (comparaTokens(x, a));
+					this.erro = comparaTokens(x, a);
 				} else {
 					mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
 					mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+					
+					this.erro = true;
 					throw new SintaticoException(ParserConstants.PARSER_ERROR[x]);
 				}
-			} else if (naoTerminal(x)) {
-				mensagens("l", x + " - é um não terminal");
+			} else if (x >= Constants.FIRST_NON_TERMINAL) {
+				mensagens("l", x + " - é um Não terminal");
 
 				if (consultaProducoes(x, a)) {
 					mensagens("l", "Resetando analise...");
 					mensagens("l", "-----------------------");
 
-					return false;
+					this.erro = false;
 				} else {
 					mensagens("l", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
 					mensagens("e", "Erro sintático: " + ParserConstants.PARSER_ERROR[x]);
+					
+					this.erro = true;
 					throw new SintaticoException(ParserConstants.PARSER_ERROR[x]);
 				}
 			} else {
-				return false;
+				this.erro = false;
 			}
 		} else {
 			mensagens("l", "Pilha está vazia");
 
 			compilado = true;
-			return true;
+			this.erro = true;
 		}
 	}
 
-	public boolean terminal(int token) {
-		return token < Constants.FIRST_NON_TERMINAL;
-	}
-
-	public boolean naoTerminal(int token) {
-		return token >= Constants.FIRST_NON_TERMINAL;
-	}
-
 	private boolean consultaProducoes(int topoDaPilha, int tokenAtual) {
-		int pos, tamanho;
+		int posPro, tamanho;
 		int[] producao;
 
-		pos = ParserConstants.PARSER_TABLE[topoDaPilha - Constants.FIRST_NON_TERMINAL][tokenAtual - 1];
+		posPro = ParserConstants.PARSER_TABLE[topoDaPilha - Constants.FIRST_NON_TERMINAL][tokenAtual - 1];
 
 		mensagens("l", "Posição da regra: " + "{" + (topoDaPilha - Constants.FIRST_NON_TERMINAL) + ","
 				+ (tokenAtual - 1) + "}");
 
-		if (pos >= 0) {
-			producao = ParserConstants.PRODUCTIONS[pos];
+		if (posPro >= 0) {
+			producao = ParserConstants.PRODUCTIONS[posPro];
 			tamanho = producao.length;
 
 			mensagens("l", "Nova produção encontrada - " + Arrays.toString(producao));
@@ -173,8 +169,7 @@ public class Sintatico {
 			tokenAtual = listaTokens.nextToken();
 
 			if (tokenAtual != null) {
-				String ta = tokenAtual.toString();
-				mensagens("t", ta);
+				mensagens("t", tokenAtual.toString() + " - " + getNomeToken(tokenAtual.getId()));
 			}
 
 			mensagens("l", "Novo token chamado: " + tokenAtual);
@@ -187,5 +182,51 @@ public class Sintatico {
 		}
 
 		return false;
+	}
+
+	private String getNomeToken(int id) {
+		if (id >= 2 && id <= 25) {
+			return "Palavra reservada";
+		} else if (id == 26) {
+			return "Abre Parenteses";
+		} else if (id == 27) {
+			return "Fecha Parenteses";
+		} else if (id == 28) {
+			return "Ponto e virgula";
+		} else if (id == 29) {
+			return "Ponto";
+		} else if (id == 30) {
+			return "Adição";
+		} else if (id == 31) {
+			return "Subtração";
+		} else if (id == 32) {
+			return "Multiplicação";
+		} else if (id == 33) {
+			return "Divisão";
+		} else if (id == 34) {
+			return "Virgula";
+		} else if (id == 35) {
+			return "Dois pontos";
+		} else if (id == 36) {
+			return "Atribuição";
+		} else if (id == 37) {
+			return "Igualdade";
+		} else if (id == 38) {
+			return "Menor";
+		} else if (id == 39) {
+			return "Maior ou igual";
+		} else if (id == 40) {
+			return "Menor";
+		} else if (id == 41) {
+			return "Menor igual";
+		} else if (id == 42) {
+			return "Diferente";
+		} else if (id == 43) {
+			return "Identificador";
+		} else if (id == 44) {
+			return "Inteiro";
+		} else {
+			return "Literal";
+		}
 	}
 }

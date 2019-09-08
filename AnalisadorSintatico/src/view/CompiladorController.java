@@ -36,9 +36,12 @@ public class CompiladorController {
 
 	@FXML
 	private Button gerarCodigo03;
-	
+
 	@FXML
 	private Button gerarCodigo04;
+
+	@FXML
+	private Button gerarCodigo05;
 
 	@FXML
 	private Button btnCompilar;
@@ -60,8 +63,6 @@ public class CompiladorController {
 
 	Lexico lexico = new Lexico();
 	Sintatico sintatico = new Sintatico();
-	
-	private String msgErro = "";
 
 	public void selecionarArqAction(ActionEvent event) {
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
@@ -89,7 +90,6 @@ public class CompiladorController {
 			try {
 				File selectedFile = jfc.getSelectedFile();
 				BufferedReader reader;
-				StringBuilder sb = new StringBuilder();
 				reader = new BufferedReader(new FileReader(selectedFile));
 
 				String linha = reader.readLine();
@@ -104,6 +104,8 @@ public class CompiladorController {
 				}
 
 				areaCodigo.setText(codigo);
+				
+				reader.close();
 
 			} catch (FileNotFoundException e1) {
 				e1.printStackTrace();
@@ -125,9 +127,13 @@ public class CompiladorController {
 	public void gerarCodigo03Action(ActionEvent event) {
 		getCodigo(3);
 	}
-	
+
 	public void gerarCodigo04Action(ActionEvent event) {
 		getCodigo(4);
+	}
+
+	public void gerarCodigo05Action(ActionEvent event) {
+		getCodigo(5);
 	}
 
 	public void getCodigo(int num) {
@@ -139,13 +145,14 @@ public class CompiladorController {
 			arquivo = "codigos/codigo-02.txt";
 		} else if (num == 3) {
 			arquivo = "codigos/codigo-03.txt";
-		} else {
+		} else if (num == 4) {
 			arquivo = "codigos/codigo-04.txt";
+		} else {
+			arquivo = "codigos/codigo-05.txt";
 		}
 
 		try {
 			BufferedReader reader;
-			StringBuilder sb = new StringBuilder();
 			reader = new BufferedReader(new FileReader(arquivo));
 
 			String linha = reader.readLine();
@@ -158,6 +165,8 @@ public class CompiladorController {
 
 			areaCodigo.setText(codigo);
 
+			reader.close();
+
 		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
 		} catch (IOException e1) {
@@ -166,24 +175,22 @@ public class CompiladorController {
 	}
 
 	@FXML
-	void Compilar(ActionEvent event) throws SintaticoException {
+	void Compilar(ActionEvent event) {
 		this.outputErros.setText(null);
 		this.outputLogs.setText(null);
 		this.outputTokens.setText(null);
-		
-		Lexico lexico = new Lexico();
-		Sintatico sintatico = new Sintatico();
-
-		String linha = "";
 		String codigo = "";
-		int i = 0;
+
+		Lexico lexico = new Lexico();
 
 		codigo = areaCodigo.getText();
 
-		if (!codigo.isEmpty()) {
-			lexico.setInput(codigo.toUpperCase());
-			sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
-		} else {
+		try {
+			if (!codigo.isEmpty()) {
+				lexico.setInput(codigo.toUpperCase());
+				sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
+			}
+		} catch (Exception e) {
 			outputErros.setText("INSIRA UM CÓDIGO NO CAMPO ACIMA!");
 		}
 	}
