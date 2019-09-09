@@ -22,19 +22,19 @@ public class Sintatico {
 
 	public void mensagens(String tipo, String msg) {
 		if (tipo.equals("t")) {
-			this.listaT += msg + "\n";
-			this.lt.setText(this.listaT);
+			listaT += msg + "\n";
+			lt.setText(listaT);
 		} else if (tipo.equals("l")) {
-			this.listaL += msg + "\n";
-			this.ll.setText(this.listaL);
+			listaL += msg + "\n";
+			ll.setText(listaL);
 		} else {
-			this.listaE += msg + "\n";
-			this.le.setText(this.listaE);
+			listaE += msg + "\n";
+			le.setText(listaE);
 		}
 	}
 
 	public void inicialisar(Lexico lexico, Label lt, Label ll, Label le) {
-		this.listaTokens = lexico;
+		listaTokens = lexico;
 		this.lt = lt;
 		this.ll = ll;
 		this.le = le;
@@ -64,6 +64,7 @@ public class Sintatico {
 		if (compilado) {
 			mensagens("l", "COMPILADO COM SUCESSO");
 			mensagens("e", "COMPILADO COM SUCESSO");
+			pilha.clear();
 		}
 	}
 

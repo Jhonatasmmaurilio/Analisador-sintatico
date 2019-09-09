@@ -176,21 +176,23 @@ public class CompiladorController {
 
 	@FXML
 	void Compilar(ActionEvent event) {
-		this.outputErros.setText(null);
-		this.outputLogs.setText(null);
-		this.outputTokens.setText(null);
+		outputErros.setText(null);
+		outputLogs.setText(null);
+		outputTokens.setText(null);
+		
+		System.out.println(this.outputTokens.getText());
+		
 		String codigo = "";
 
 		Lexico lexico = new Lexico();
+		Sintatico sintatico = new Sintatico();
 
 		codigo = areaCodigo.getText();
-
-		try {
-			if (!codigo.isEmpty()) {
-				lexico.setInput(codigo.toUpperCase());
-				sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
-			}
-		} catch (Exception e) {
+	
+		if (!codigo.isEmpty()) {
+			lexico.setInput(codigo.toUpperCase());
+			sintatico.inicialisar(lexico, outputTokens, outputLogs, outputErros);
+		}else {
 			outputErros.setText("INSIRA UM CÓDIGO NO CAMPO ACIMA!");
 		}
 	}
