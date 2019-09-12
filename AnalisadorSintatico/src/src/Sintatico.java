@@ -177,15 +177,15 @@ public class Sintatico {
 			mensagens("l", "Resetando analise...");
 			mensagens("l", "-----------------------");
 		} catch (LexicalError e) {
-			mensagens("l", "Erro Lexico: " + e.getMessage() + "e, em " + e.getPosition());
-			mensagens("e", "Erro Lexico: " + e.getMessage() + "e, em " + e.getPosition());
+			mensagens("l", "Erro Lexico: " + e.getMessage() + ", em " + e.getPosition());
+			mensagens("e", "Erro Lexico: " + e.getMessage() + ", em " + e.getPosition());
 			return true;
 		}
 
 		return false;
 	}
 
-	private String getNomeToken(int id) {
+	public String getNomeToken(int id) {
 		if (id >= 2 && id <= 25) {
 			return "Palavra reservada";
 		} else if (id == 26) {

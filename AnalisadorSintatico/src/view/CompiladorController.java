@@ -180,8 +180,6 @@ public class CompiladorController {
 		outputLogs.setText(null);
 		outputTokens.setText(null);
 		
-		System.out.println(this.outputTokens.getText());
-		
 		String codigo = "";
 
 		Lexico lexico = new Lexico();

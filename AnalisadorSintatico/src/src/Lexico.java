@@ -38,7 +38,6 @@ public class Lexico implements Constants {
 
 			if (state < 0)
 				break;
-
 			else {
 				if (tokenForState(state) >= 0) {
 					endState = state;
@@ -52,6 +51,11 @@ public class Lexico implements Constants {
 		position = end;
 
 		int token = tokenForState(endState);
+		
+		Sintatico s = new Sintatico();
+		
+		
+		System.out.println(s.getNomeToken(token) + token);
 
 		if (token == 0)
 			return nextToken();
