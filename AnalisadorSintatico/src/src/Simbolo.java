@@ -74,7 +74,7 @@ public class Simbolo {
 
 	@Override
 	public String toString() {
-		return "Simbolo: " + this.nome;
+		return this.nome;
 	}
 
 }

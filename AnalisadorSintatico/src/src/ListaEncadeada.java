@@ -26,7 +26,11 @@ public class ListaEncadeada {
 	}
 
 	public void setQtd() {
-		this.qtd = qtd++;
+		this.qtd = qtd + 1;
+	}
+	
+	public void diminuiQtd() {
+		this.qtd = qtd - 1;
 	}
 
 	@Override
