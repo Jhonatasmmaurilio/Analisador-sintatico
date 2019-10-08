@@ -14,11 +14,7 @@ public class tabelaSimbolosController {
 			ListaEncadeada le = new ListaEncadeada();
 			Simbolo s = new Simbolo(nome, categoria, nivel, geralA, geralB);
 
-//			System.out.println("INSERIR: (" + nome + ")");
-
 			indice = Hashing(s.getNome());
-
-//			System.out.println("hash:" + indice);
 
 			posicao = VerificaPosicao(indice);
 
@@ -74,115 +70,61 @@ public class tabelaSimbolosController {
 		}
 	}
 
-	private static boolean Buscar(String nome, boolean deletar) {
-		System.out.println("BUSCAR por: " + nome);
-
-		if (totalInseridos > 0) {
-			for (int i = 0; i < ts.length; i++) {
-
-				if (ts[i] != null) {
-					Simbolo el = ts[i].getPrimeiro();
-
-					if (el.getNome().equals(nome)) {
-						System.out.println("item encontrado na posição: " + i);
-
-						if (deletar) {
-							if (el.getProximo() == null) {
-								ts[i] = null;
-								System.out.println("Item deletado com sucesso");
-								totalInseridos--;
-							} else {
-								ts[i].setPrimeiro(el.getProximo());
-								System.out.println("Item deletado com sucesso");
-							}
-						}
-
-						return true;
-					} else {
-						if (el.getProximo() != null) {
-							Simbolo aux = el;
-
-							while (aux.getProximo() != null) {
-								Simbolo elProx = aux.getProximo();
-
-								if (elProx.getNome().equals(nome)) {
-									System.out.println("Item encontrado na posição: " + i + "(colisão)");
-
-									if (deletar) {
-										aux.setProximo(elProx.getProximo());
-										System.out.println("Item deletado com sucesso");
-									}
-
-									return true;
-								} else {
-									aux = aux.getProximo();
-								}
-							}
+	private static Simbolo Buscar2(String nome) {
+		System.out.println("BUSCAR: " + nome);
+		
+		if(totalInseridos > 0) {
+			int indice = Hashing(nome);
+			
+			if(ts[indice] != null) {
+				Simbolo el = ts[indice].getPrimeiro();
+				
+				if(el.getNome().equals(nome)) {
+					System.out.println("Item encontrado\n");
+					return ts[indice].getPrimeiro();
+				}else {
+					while(el.getProximo() != null) {
+						el = el.getProximo();
+						
+						if(el.getNome().equals(nome)) {
+							System.out.println("Item encontrado\n");
+							return el;
 						}
 					}
 				}
+			}else {
+				System.out.println("Nenhum resultado encontrado\n");
+				return null;
 			}
-
-			System.out.println("Item não encontrado");
-		} else {
-			System.out.println("Voce não inseriu nenhum item até o momento");
+		}else {
+			System.out.println("Nenhum item inserido até o momento\n");
 		}
-
-		return false;
+		
+		System.out.println("Nenhum item encontrado");
+		System.out.println("---------------------------");
+		return null;
 	}
-
-	private static boolean Alterar(String nome, Simbolo novo) {
-		System.out.println("ALTERAR: " + nome);
-
-		if (totalInseridos > 0) {
-			for (int i = 0; i < ts.length; i++) {
-				if (ts[i] != null) {
-					Simbolo el = ts[i].getPrimeiro();
-
-					if (el.getNome().equals(nome)) {
-						el.setNome(novo.getNome());
-						el.setCategoria(novo.getCategoria());
-						el.setNivel(novo.getNivel());
-						el.setGeralA(novo.getGeralA());
-						el.setGeralB(novo.getGeralB());
-
-						System.out.println("Item alterado com sucesso");
-
-						return true;
-					} else {
-						if (el.getProximo() != null) {
-							Simbolo aux = el;
-
-							while (aux.getProximo() != null) {
-								Simbolo elProx = aux.getProximo();
-
-								if (elProx.getNome().equals(nome)) {
-									elProx.setNome(novo.getNome());
-									elProx.setCategoria(novo.getCategoria());
-									elProx.setNivel(novo.getNivel());
-									elProx.setGeralA(novo.getGeralA());
-									elProx.setGeralB(novo.getGeralB());
-
-									System.out.println("Item alterado com sucesso2");
-
-									return true;
-								} else {
-									aux = aux.getProximo();
-								}
-							}
-						}
-					}
-				}
-			}
-
-			System.out.println("Item não encontrado");
-		} else {
-			System.out.println("Voce não inseriu nenhum item até o momento");
+	
+	private static void Alterar(String nome, Simbolo novo) {
+		System.out.println("ALTERAR:" + nome);
+		Simbolo el = Buscar2(nome);
+		
+		if(el != null) {
+			el.setNome(novo.getNome());
+			el.setCategoria(novo.getCategoria());
+			el.setNivel(novo.getNivel());
+			el.setGeralA(novo.getGeralA());
+			el.setGeralB(novo.getGeralB());
+			
+			System.out.println("Item alterado com sucesso");
+			
+		}else {
+			System.out.println("Nenhum item encontrado");
 		}
-
-		return false;
+		
+		System.out.println("--------------------");
 	}
-
+	
 	private static boolean Deletar(String nome) {
 		System.out.println("DELETAR");
 
@@ -264,19 +206,16 @@ public class tabelaSimbolosController {
 
 		MostrarTabela();
 
-		Buscar("var", false);
-
-		Deletar("procedure2");
-
+//		Buscar("var", false);
+//		Deletar("procedure2");
+//		MostrarTabela();
+//		
+		Simbolo novo = new Simbolo("procedure4", "VAR", 1, "", "");
+		Alterar2("var2", novo);
+//
+//		MostrarTabela();
+//		inserir("var10", "VAR", 0, "", "");
 		MostrarTabela();
-
-		Simbolo s = new Simbolo("procedure4", "VAR", 1, "", "");
-		Alterar("procedure3", s);
-
-		MostrarTabela();
-
-		inserir("var10", "VAR", 0, "", "");
-
-		MostrarTabela();
+		
 	}
 }
