@@ -6,7 +6,16 @@ public class Simbolo {
 	private int nivel;
 	private String geralA, geralB;
 	private Simbolo proximo = null;
+	private Simbolo anterior = null;	
 	private int qtd = 0;
+
+	public Simbolo getAnterior() {
+		return anterior;
+	}
+
+	public void setAnterior(Simbolo anterior) {
+		this.anterior = anterior;
+	}
 
 	public Simbolo getProximo() {
 		return proximo;
@@ -74,7 +83,7 @@ public class Simbolo {
 
 	@Override
 	public String toString() {
-		return this.nome;
+		return this.nome + "(" + this.categoria + ")";
 	}
 
 }
