@@ -1,4 +1,4 @@
-package src;
+package sintatico;
 public class AnalysisError extends Exception
 {
     private int position;

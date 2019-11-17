@@ -1,4 +1,5 @@
-package src;
+package token;
+
 public interface Constants extends ScannerConstants, ParserConstants
 {
     int EPSILON  = 0;

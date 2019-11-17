@@ -1,4 +1,4 @@
-package src;
+package token;
 public class Token {
 	private int id;
 	private String lexeme;

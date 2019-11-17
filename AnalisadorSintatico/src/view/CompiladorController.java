@@ -17,9 +17,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import src.Lexico;
-import src.Sintatico;
-import src.SintaticoException;
+import lexico.Lexico;
+import sintatico.Sintatico;
+import sintatico.SintaticoException;
 
 public class CompiladorController {
 	@FXML
@@ -64,6 +64,7 @@ public class CompiladorController {
 	Lexico lexico = new Lexico();
 	Sintatico sintatico = new Sintatico();
 
+	//leitura de arquivos externos
 	public void selecionarArqAction(ActionEvent event) {
 		JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
 		jfc.setFileFilter(new FileFilter() {
@@ -136,6 +137,7 @@ public class CompiladorController {
 		getCodigo(5);
 	}
 
+	//selecionar arquivos ja com codigo
 	public void getCodigo(int num) {
 		String arquivo = "codigos/codigo-01.txt";
 

@@ -1,9 +1,8 @@
-package view;
+package token;
 
-import src.ListaEncadeada;
-import src.Simbolo;
+import listaEncadeada.ListaEncadeada;
 
-public class tabelaSimbolosController {
+public class TabelaSimbolos {
 	private static ListaEncadeada[] ts;
 	private static int totalInseridos = 0;
 
@@ -34,12 +33,12 @@ public class tabelaSimbolosController {
 
 			aux.setProximo(s);
 			s.setAnterior(aux);
-			
+
 			ts[indice].setUltimo(aux.getProximo());
-			
+
 			System.out.println(s.getNome() + " inserido");
 		}
-			
+
 		System.out.println("-------------------------");
 	}
 
@@ -71,91 +70,91 @@ public class tabelaSimbolosController {
 
 	private static Simbolo Buscar(String nome) {
 		System.out.println("BUSCAR: " + nome);
-		
-		if(totalInseridos > 0) {
+
+		if (totalInseridos > 0) {
 			int indice = Hashing(nome);
-			
-			if(ts[indice] != null) {
+
+			if (ts[indice] != null) {
 				Simbolo el = ts[indice].getPrimeiro();
-				
-				if(el.getNome().equals(nome)) {
+
+				if (el.getNome().equals(nome)) {
 					System.out.println("Item encontrado");
 					return ts[indice].getPrimeiro();
-				}else {
-					while(el.getProximo() != null) {
+				} else {
+					while (el.getProximo() != null) {
 						el = el.getProximo();
-						
-						if(el.getNome().equals(nome)) {
+
+						if (el.getNome().equals(nome)) {
 							System.out.println("Item encontrado");
 							return el;
 						}
 					}
 				}
-			}else {
+			} else {
 				System.out.println("Nenhum resultado encontrado\n");
 				return null;
 			}
-		}else {
+		} else {
 			System.out.println("Nenhum item inserido até o momento\n");
 		}
-		
+
 		System.out.println("Nenhum item encontrado");
 		System.out.println("---------------------------");
 		return null;
 	}
-	
+
 	private static void Alterar(String nome, Simbolo novo) {
 		System.out.println("ALTERAR:" + nome);
 		Simbolo el = Buscar(nome);
-		
-		if(el != null) {
+
+		if (el != null) {
 			el.setNome(novo.getNome());
 			el.setCategoria(novo.getCategoria());
 			el.setNivel(novo.getNivel());
 			el.setGeralA(novo.getGeralA());
 			el.setGeralB(novo.getGeralB());
-			
+
 			System.out.println("Item alterado com sucesso");
-			
-		}else {
+
+		} else {
 			System.out.println("Nenhum item encontrado");
 		}
-		
+
 		System.out.println("--------------------");
 	}
-	
+
 	private static boolean Deletar(String nome) {
 		System.out.println("DELETAR");
 
 		Simbolo el = Buscar(nome);
 		System.out.println(el);
-		
-		if(el != null) {
-			//primeiro da fila
-			if(el.getAnterior() == null) {
+
+		if (el != null) {
+			// primeiro da fila
+			if (el.getAnterior() == null) {
 				ts[Hashing(nome)].setPrimeiro(el.getProximo());
 			}
-			//unico na fila
-			if(el.getAnterior() == null && el.getProximo() == null) {
+			// unico na fila
+			if (el.getAnterior() == null && el.getProximo() == null) {
 				ts[Hashing(nome)] = null;
 			}
-			//ultimo da fila
-			if(el.getAnterior() != null && el.getProximo() == null) {
+			// ultimo da fila
+			if (el.getAnterior() != null && el.getProximo() == null) {
 				el.getAnterior().setProximo(null);
 				el.setAnterior(null);
 				el.setProximo(null);
 			}
-			//no meio da fila
-			if(el.getAnterior() != null && el.getProximo() != null) {
+			// no meio da fila
+			if (el.getAnterior() != null && el.getProximo() != null) {
 				el.getAnterior().setProximo(el.getProximo());
 				el.getProximo().setAnterior(el.getAnterior());
 				el.setAnterior(null);
 				el.setProximo(null);
 			}
-		}else {
+		} else {
 			System.out.println("Item não encontrado");
 		}
-				
+
 		System.out.println("-----------------------------------");
 
 		return true;
@@ -212,23 +211,23 @@ public class tabelaSimbolosController {
 		Simbolo el3 = new Simbolo("loren01", "CONST", 0, "", "");
 		Simbolo el4 = new Simbolo("qwert1", "CONST", 0, "", "");
 		Simbolo el5 = new Simbolo("loren03", "CONST", 0, "", "");
-		
+
 		Alterar(el1.getNome(), el1);
 		Alterar(el2.getNome(), el2);
 		Alterar(el3.getNome(), el3);
 		Alterar(el4.getNome(), el4);
 		Alterar(el5.getNome(), el5);
-		
+
 		MostrarTabela();
-		
+
 		Deletar("qwert3");
 		Deletar("ipsum01");
 		Deletar("ipslum01");
-		
+
 		MostrarTabela();
-		
+
 		Buscar("charbel");
-		
+
 		System.out.println(Buscar("teste1") + "\n-----------------");
 		System.out.println(Buscar("teste2") + "\n-----------------");
 		System.out.println(Buscar("qwert2") + "\n-----------------");

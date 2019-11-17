@@ -1,4 +1,8 @@
-package src;
+package lexico;
+
+import sintatico.Sintatico;
+import token.Constants;
+import token.Token;
 
 public class Lexico implements Constants {
 	private int position;

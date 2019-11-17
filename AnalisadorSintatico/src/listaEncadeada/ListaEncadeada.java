@@ -1,4 +1,6 @@
-package src;
+package listaEncadeada;
+
+import token.Simbolo;
 
 public class ListaEncadeada {
 	private Simbolo primeiro;

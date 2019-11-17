@@ -1,10 +1,15 @@
-package src;
+package sintatico;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Stack;
 
 import javafx.scene.control.Label;
+import lexico.LexicalError;
+import lexico.Lexico;
+import token.Constants;
+import token.ParserConstants;
+import token.Token;
 
 public class Sintatico {
 	private Lexico listaTokens;
@@ -122,6 +127,8 @@ public class Sintatico {
 					this.erro = true;
 					throw new SintaticoException(ParserConstants.PARSER_ERROR[x]);
 				}
+			} else if(x < Constants.FIRST_SEMANTIC_ACTION) {
+				
 			} else {
 				this.erro = false;
 			}

@@ -1,12 +1,10 @@
 program teste;
 var
-a :integer;
+a,x,y :integer;
 begin
 	writeln("123a%$&¨@*#");
 	
 	WHILE X>Y DO
-		BEGIN CALL P;
-			READLN(X,Y)
-		END;
+		READLN(X,Y);
 	WRITELN("TUDO OK - BOAS FÉRIAS");
 end.

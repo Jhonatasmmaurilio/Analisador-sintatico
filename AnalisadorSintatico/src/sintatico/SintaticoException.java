@@ -1,4 +1,4 @@
-package src;
+package sintatico;
 public class SintaticoException extends Exception {
 	private String msg = "";
 

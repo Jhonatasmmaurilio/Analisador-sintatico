@@ -1,4 +1,4 @@
-package src;
+package token;
 public interface ScannerConstants
 {
 
@@ -125,3 +125,4 @@ public interface ScannerConstants
     };
 
 }
+

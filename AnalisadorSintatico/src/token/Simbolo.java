@@ -1,4 +1,4 @@
-package src;
+package token;
 
 public class Simbolo {
 	private String nome;
