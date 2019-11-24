@@ -1,7 +1,6 @@
 package semantico;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Stack;
 
 import TabelaSimbolo.Simbolo;
@@ -29,7 +28,7 @@ public class Semantico {
 
 	public static Simbolo identificador;
 	public static Simbolo procedureAtual;
-	public static Simbolo index;
+	public static Simbolo simbolo;
 
 	public static String tipoIdentificador;
 	public static String nIdentificador;
@@ -62,23 +61,20 @@ public class Semantico {
 		instrucoes.add(new Instrucao(index + "", ins, op1, op2));
 	}
 
-//	public void mostraInst() {
-//		Iterator iter = instrucoes.iterator();
-//		
-//		while (iter.hasNext()) {
-//			System.out.println(iter.getInstrucao());
-//		}
-//	}
-
 	@SuppressWarnings("static-access")
 	public void AnaliseSemantica(int acao, Token token, Token tokenAnterior) throws SemanticoExepition {
 		msg("x = " + (acao - 77));
-		msg("-> token atual: [" + token.getLexeme() + "]");
-		msg("-> token anterior: [" + tokenAnterior.getLexeme() + "]");
+		msg("------------------------");
+		msg("token atual: [" + token.getLexeme() + "]");
+		msg("token anterior: [" + tokenAnterior.getLexeme() + "]");
+		msg("------------------------");
 
 		switch (acao - 77) {
 
 		case 100:
+			msg("acao: 100 - reconhece nome PROGRAMA");
+			msg("inicializa programa");
+
 			MH = new MaquinaHipotetica();
 			instrucoes = new ArrayList<Instrucao>();
 
@@ -107,39 +103,41 @@ public class Semantico {
 			lc = 1;
 			lit = 1;
 
-			msg("acao: 100 - reconhece nome PROGRAMA");
-			msg("inicializa programa");
-
 			break;
 		case 101:
+			msg("ACAO: 101 - fim do programa (FEITA)");
+			msg("add MH: PARA");
+
 			MH.IncluirAI(areaInstrucoes, 26, 0, 0);
 			addInstrucao(areaInstrucoes.LC, "PARA", "-", "-");
 
-			msg("acao: 101 - encontra programa");
-			msg("add MH: PARA");
-
+			System.out.println(instrucoes);
 			break;
 		case 102:
-			MH.IncluirAI(areaInstrucoes, 24, 0, (deslocamento + totalVariavel));
-			addInstrucao(areaInstrucoes.LC, "AMEN", "-", (deslocamento + totalVariavel) + "");
-
-			msg("acao: 102 - apos declaracao de variavel");
+			msg("ACAO: 102 - apos declaracao de variavel (FEITA)");
 			msg("add MH: AMEN");
 			msg("tabela instruao");
 			msg(instrucoes.toString());
 			msg("deslocamento: " + deslocamento);
 			msg("totalVariavel: " + totalVariavel);
 
+			deslocamento = 3;
+
+			MH.IncluirAI(areaInstrucoes, 24, 0, (deslocamento + totalVariavel));
+			addInstrucao(areaInstrucoes.LC, "AMEN", "-", (deslocamento + totalVariavel) + "");
+
 			break;
-//		case 103:
-//			tipoIdentificador = "ROTULO";
-//
-//			msg("acao: 103 - identificador rotulo");
-//
-//			break;
+		case 103:
+			msg("ACAO: 103 - seta identificador para rotulo (FEITA)");
+			msg("tipoIdentificadorRotulo = ROTULO");
+
+			tipoIdentificador = "ROTULO";
+
+			break;
 		case 104:
-			msg("acao: 104 - nome de rotulo, variavel ou parametro");
+			msg("ACAO: 104 - nome de rotulo, variavel ou parametro (FEITA)");
 			msg("token atual: [" + tokenAnterior.getLexeme() + "]");
+
 			Simbolo s = ts.buscar(tokenAnterior.getLexeme());
 
 			if (tipoIdentificador.equals("ROTULO")) {
@@ -169,11 +167,14 @@ public class Semantico {
 				msg("tipoIdentificador é igual a VAR");
 
 				if (s == null) {
-					ts.inserir(tokenAnterior.getLexeme(), "VAR", nivelAtual, "0", "-");
+					ts.inserir(tokenAnterior.getLexeme(), "VAR", nivelAtual, deslocamento + "", "-");
 					totalVariavel++;
+					deslocamento++;
 
 					msg("[" + tokenAnterior.getLexeme() + "] inserido na TS");
 					msg("totalVariaveis: " + totalVariavel);
+					msg("deslocamento: " + deslocamento);
+					System.out.println(instrucoes);
 				} else {
 					if (s.getNivel() != nivelAtual) {
 						ts.inserir(tokenAnterior.getLexeme(), "VAR", nivelAtual, "0", "-");
@@ -219,33 +220,38 @@ public class Semantico {
 			}
 
 			break;
-//		case 105:
-//			msg("acao 105: reconhece nome CONSTANTE");
-//
-//			s = ts.buscar(token.getLexeme());
-//
-//			if (s == null) {
-//				ts.inserir(token.getLexeme(), "CONSTANTE", nivelAtual, "-", "-");
-//				identificador = token;
-//			} else {
-//				msg("Constatnte " + token.getLexeme() + " ja declarada");
-//				throw new SemanticoExepition("Erro semantico: Constante " + token.getLexeme() + " ja declarada");
-//			}
-//
-//			break;
-//		case 106:
-//			identificador.setGeralA(token.getLexeme());
-//
-//			msg("acao 106: reconhece valor da onstante");
-//			msg("identificador geralA: " + identificador.getGeralA());
-//
-//			break;
+		case 105:
+			msg("ACAO 105: reconhece nome CONSTANTE (FEITA)");
+			
+			identificador = ts.buscar(tokenAnterior.getLexeme());
+
+			if (identificador == null) {
+				msg("constante ainda não declarada");
+				
+				ts.inserir(tokenAnterior.getLexeme(), "CONSTANTE", nivelAtual, "-", "-");
+				identificador = ts.buscar(tokenAnterior.getLexeme());
+			} else {
+				identificador = null;
+				msg("Constatnte " + tokenAnterior.getLexeme() + " ja foi declarada");
+				
+				throw new SemanticoExepition("Erro semantico: Constante " + tokenAnterior.getLexeme() + " ja foi declarada");
+			}
+
+			break;
+		case 106:
+			identificador.setGeralA(tokenAnterior.getLexeme());
+
+			msg("ACAO 106: reconhece valor da CONSTANTE (FEITA)");
+			msg("constante: " + identificador.getNome());
+			msg("identificador geralA: " + identificador.getGeralA());
+
+			break;
 		case 107:
+			msg("acao 107: seta tipo de variavel (FEITA)");
+			msg("tipoIdentificador = VAR");
+
 			tipoIdentificador = "VAR";
 			totalVariavel = 0;
-
-			msg("acao 107: seta tipo de variavel");
-			msg("tipoIdentificador = VAR");
 
 			break;
 //		case 108:
@@ -343,42 +349,40 @@ public class Semantico {
 ////						simbolo113.setGeralA(areaInstrucoes.LC + "");
 ////					}
 ////				}
-//		case 114:
-//			Simbolo simboloVar = ts.buscar(token.getLexeme());
-//
-//			msg("acao 114: atribuicao a esquerda");
-//			msg("busca na TS por " + token.getLexeme());
-//
-//			if (simboloVar != null) {
-//				msg("item encontrado");
-//
-//				if (!simboloVar.getCategoria().equals("VAR")) {
-//					msg("Erro semantico: " + token.getLexeme() + " nao é variavel");
-//
-//					throw new SemanticoExepition("Erro semantico: " + nomeIdentificador + " não é uma variável");
-//				} else {
-//					n = nivelAtual - simboloVar.getNivel();
-//
-//					geralA = Integer.parseInt(simboloVar.getGeralA());
-//
-//					msg("nivel atual - nivel do simbolo: " + n);
-//					msg("geralA: " + geralA);
-//				}
-//
-//			} else {
-//				msg("Simbolo " + nomeIdentificador + " n foi declarada");
-//				throw new SemanticoExepition("Variável " + nomeIdentificador + " não foi declarada");
-//			}
-//
-//			break;
-//		case 115:
-//			addInstrucao(areaInstrucoes.LC, "ARMZ", n + "", geralA + "");
-//			MH.IncluirAI(areaInstrucoes, 4, n, geralA);
-//
-//			msg("acao: apos expressao atribuicao");
-//			msg("add MH: ARMZ" + ", " + n + ", " + geralA);
-//
-//			break;
+		case 114:
+			msg("ACAO 114: atribuicao a esquerda (FEITA)");
+
+			Simbolo simboloVar = ts.buscar(tokenAnterior.getLexeme());
+
+			if (simboloVar != null) {
+				if (!simboloVar.getCategoria().equals("VAR")) {
+					msg("Erro semantico: " + tokenAnterior.getLexeme() + " nao é variavel");
+
+					throw new SemanticoExepition("Erro semantico: " + nomeIdentificador + " não é uma variável");
+				} else {
+					n = nivelAtual - simboloVar.getNivel();
+
+					geralA = Integer.parseInt(simboloVar.getGeralA());
+
+					msg("nivel atual - nivel do simbolo: " + n);
+					msg("geralA: " + geralA);
+				}
+
+			} else {
+				msg("Simbolo " + nomeIdentificador + " n foi declarada");
+				throw new SemanticoExepition("Variável " + nomeIdentificador + " não foi declarada");
+			}
+
+			break;
+		case 115:
+			msg("ACAO: Apos expressao atribuicao (FEITA)");
+			msg("add MH: ARMZ" + ", " + n + ", " + geralA);
+
+			MH.IncluirAI(areaInstrucoes, 4, n, geralA);
+			addInstrucao(areaInstrucoes.LC, "ARMZ", n + "", geralA + "");
+			System.out.println(instrucoes);
+
+			break;
 //		case 116:
 //			Simbolo simbolo116 = ts.buscar(token.getLexeme());
 //
@@ -394,20 +398,297 @@ public class Semantico {
 //				msg("Erro semantico: " + token.getLexeme() + " nao foi declarado");
 //				throw new SemanticoExepition("Erro semantico: " + token.getLexeme() + " nao foi declarado");
 //			}
-		case 130:
-			MH.IncluirAL(areaLiterais, tokenAnterior.getLexeme());			
-			MH.IncluirAI(areaInstrucoes, 23, 0, areaLiterais.LIT-1);
-			addInstrucao(areaInstrucoes.LC,"IMPL","0",(areaLiterais.LIT)+"");
+		case 120:
+			msg("ACAO: Apos expressao IF (FEITA)");
+			msg("add MH:[" + (areaInstrucoes.LC + 1) + " DVSF, -, ?]");
 
-			msg("acao 130: WRITELN");
+			pilhaIf.push(areaInstrucoes.LC);
+			
+			msg("pilhaIf" + pilhaIf);
+			
+			MH.IncluirAI(areaInstrucoes, 20, -1, -1);
+			addInstrucao(areaInstrucoes.LC, "DVSF", "-", "?");
+			
+			System.out.println(instrucoes);
+
+			break;
+		case 121:
+			msg("ACAO 121: Encontrou ELSE (FEITA)");
+			msg("pilhaIf: " + pilhaIf);
+			
+			int posicao1 = pilhaIf.pop();
+			
+			msg("topo da pilaIf: " + posicao1);
+			msg("busca instrucao: " + posicao1);
+
+			msg(instrucoes.get(posicao1) + "");
+			
+			instrucoes.get(posicao1).setOp2(areaInstrucoes.LC + 1 + "");
+			MH.AlterarAI(areaInstrucoes, posicao1, 0, areaInstrucoes.LC);
+			
+			System.out.println("completa DSVS gerada no #122");
+			msg("seta desvio para instrucao: " + (areaInstrucoes.LC + 1));
+			msg(instrucoes + "");
+			
+			break;
+		case 122:
+			msg("ACAO 122: Encontrou ELSE (FEITA)");
+			msg("pilhaIf: " + pilhaIf);
+			
+			int posicao2 = pilhaIf.pop();
+
+			msg("topo da pilhaIF: " + (posicao2));
+			msg("busca pela instrucao: " + (posicao2));
+			msg(instrucoes.get(posicao2 - 1) + "");
+			
+			instrucoes.get(posicao2 - 1).setOp2((areaInstrucoes.LC + 1) + "");
+			
+			msg("seta o valor ? do ELSE");
+			msg(instrucoes.get(posicao2 - 1)+ "");
+			
+			MH.AlterarAI(areaInstrucoes, posicao2, 0, areaInstrucoes.LC + 1);
+			
+			pilhaIf.push(areaInstrucoes.LC);
+			
+			MH.IncluirAI(areaInstrucoes, 19, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "DSVS", "-", "?");
+			
+			msg("altera na MH");
+			msg("resolve DSVF de #120");
+			msg("add MH: [" + areaInstrucoes.LC + ", DSVF" + ", -, - ]");
+			msg(instrucoes + "");
+			break;
+		case 123:
+			msg("ACAO 123: WHILE antes da expressao (FEITA)");
+			msg("insere na pilha while:" + areaInstrucoes.LC);
+			
+			pilhaWhile.push(areaInstrucoes.LC);
+
+			msg("pilhaWhile: " + pilhaWhile);
+			break;
+		case 124:
+			msg("ACAO: WHILE depois da expresao (FEITA)");
+			
+			addInstrucao(areaInstrucoes.LC,"DVSF","-","?");
+			
+			pilhaWhile.push(areaInstrucoes.LC);
+			msg("add pilhaWhile: " + areaInstrucoes.LC);
+			msg("pilhaWhile: " + pilhaWhile);
+			
+			MH.IncluirAI(areaInstrucoes, 20, 0, 0);
+			msg("add MH: [" + areaInstrucoes.LC + ", DSVF, -, ?");
+
+			break;
+		case 125:
+			System.out.println("ACAO 125: WHILE (FEITA)");
+		
+			msg("pilhaWhile: " + pilhaWhile);
+			int posicao3 = pilhaWhile.pop();
+			msg("topo pilha: " + posicao3);
+			
+			MH.AlterarAI(areaInstrucoes,posicao3 , 0, areaInstrucoes.LC+1);
+			msg("altera MH");
+			
+			msg("intrução na posição: " + posicao3);
+			msg(instrucoes.get(posicao3) + "");
+			
+			instrucoes.get(posicao3).setOp2((areaInstrucoes.LC + 1) + "");
+			
+			msg(instrucoes.get(posicao3) + "");
+			
+			int aux = pilhaWhile.pop();
+			
+			msg("topo pilhaWhile: " + aux);
+			msg("pilhaWhila: " + pilhaWhile);
+			
+			addInstrucao(areaInstrucoes.LC,"DSVS", "-",""+(aux));
+			MH.IncluirAI(areaInstrucoes, 19, 0,aux);
+			
+			msg("add MH: [" + areaInstrucoes.LC + ", DSVS, - , " + aux);
+			break;
+		case 128:
+			msg("ACAO 128: READLN (FEITA)");
+			msg("contexto = readln");
+
+			contexto = "READLN";
+
+			break;
+		case 129:
+			msg("ACAO 129: identificador de variavel (FEITA)");
+
+			int nivelA = 0;
+			int geralA = 0;
+			int diferencaNivel = 0;
+			int deslocamento = 0;
+
+			simbolo = ts.buscar(tokenAnterior.getLexeme());
+
+			if (simbolo != null) {
+				if (contexto.equals("READLN")) {
+					msg("contexto igual a READLN");
+
+					if (simbolo.getCategoria().equals("VAR")) {
+						MH.IncluirAI(areaInstrucoes, 21, 0, 0);
+						addInstrucao(areaInstrucoes.LC, "LEIT", "-", "-");
+
+						nivelA = simbolo.getNivel() - nivelAtual;
+						geralA = Integer.parseInt(simbolo.getGeralA());
+
+						MH.IncluirAI(areaInstrucoes, 4, nivel, geralA);
+						addInstrucao(areaInstrucoes.LC, "ARMZ", nivel + "", geralA + "");
+
+						msg("adiciona na MH ");
+						msg("inclui LEIT na MH: " + 21);
+						msg("diferenca de nivel: " + nivelA);
+						msg("endereco relativo: " + geralA);
+						msg("inclui instrucao ARMZ na MH");
+						System.out.println(instrucoes);
+					} else {
+						msg("Simbolo [" + tokenAnterior.getLexeme() + "] não é do tipo variável");
+
+						throw new SemanticoExepition(tokenAnterior.getLexeme() + " não é do tipo variável");
+					}
+				} else if (contexto.equals("EXP")) {
+					msg("contexto é igual a EXP");
+
+					String categoria = simbolo.getCategoria();
+
+					msg(tokenAnterior.getLexeme() + " encontrado, tipo:" + categoria);
+
+					if (categoria.equals("PROCEDURE") || categoria.equals("ROTULO")) {
+						msg("categoria igual a variavel");
+
+						throw new SemanticoExepition(
+								"Erro Semântico: " + tokenAnterior.getLexeme() + " não é variável");
+					} else if (categoria.equals("CONSTANTE")) {
+						geralA = Integer.parseInt(simbolo.getGeralA());
+
+						MH.IncluirAI(areaInstrucoes, 3, 0, geralA);
+						addInstrucao(areaInstrucoes.LC, "CRCT", "-", geralA + "");
+
+						msg(tokenAnterior.getLexeme() + " é uam CONST");
+						msg("index geralA: " + geralA);
+					} else {
+						diferencaNivel = nivelAtual - simbolo.getNivel();
+						deslocamento = Integer.parseInt(simbolo.getGeralA());
+
+						MH.IncluirAI(areaInstrucoes, 2, diferencaNivel, deslocamento);
+						addInstrucao(areaInstrucoes.LC, "CRVL", diferencaNivel + "", deslocamento + "");
+
+						msg("carrega valor na pilha");
+						msg("index geralA:" + deslocamento);
+						msg("add MH: CRVL");
+					}
+				}
+			} else {
+				msg("Token [" + tokenAnterior.getLexeme() + "] não foi encontrado");
+
+				throw new SemanticoExepition(tokenAnterior.getLexeme() + " não é uma variável");
+			}
+
+			break;
+		case 130:
+			msg("ACAO 130: WRITELN (FEITA)");
 			msg("add instrucao: IMPRL");
 			msg("add [" + tokenAnterior.getLexeme() + "] na area de literais");
+
+			MH.IncluirAL(areaLiterais, tokenAnterior.getLexeme());
+			MH.IncluirAI(areaInstrucoes, 23, 0, areaLiterais.LIT - 1);
+			addInstrucao(areaInstrucoes.LC, "IMPL", "0", (areaLiterais.LIT) + "");
+			System.out.println(instrucoes);
+
+			break;
+		case 131:
+			msg("ACAO: Gera intrucao IMPR (FEITA)");
+			msg("add MH: IMPR");
+
+			MH.IncluirAI(areaInstrucoes, 22, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "IMPR", "-", "-");
+			System.out.println(instrucoes);
+
+			break;
+		case 137:
+			msg("ACAO: apos variavel FOR (FEITA)");
 			
+			Simbolo s1 = ts.buscar(tokenAnterior.getLexeme());
+			
+			if(s1 == null || !s1.getCategoria().equals("VAR")) {
+				msg("Não encontrada ou não e do tipo VAR");
+				
+				throw new SemanticoExepition(tokenAnterior.getLexeme() + " não foi declarado ou não é nome de variável");
+			}else {
+				n = s1.getNivel();
+				
+				System.out.println("n = " + n);
+			}
+			
+			break;
+		case 143:
+			msg("ACAO: Gerar CMMA (FEITA)");
+			msg("add MH: CMMA");
+
+			MH.IncluirAI(areaInstrucoes, 14, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "CMMA", "-", "-");
+			System.out.println(instrucoes);
+
+			break;
+		case 148:
+			msg("ACAO: Gera instrucao SOMA (FEITA)");
+			msg("add MH: SOMA");
+
+			MH.IncluirAI(areaInstrucoes, 5, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "SOMA", "-", "-");
+			System.out.println(instrucoes);
+
+			break;
+		case 149:
+			msg("ACAO 149: Gera instucao SUBI (FEITA)");
+			msg("add MH: SUBT");
+
+			MH.IncluirAI(areaInstrucoes, 6, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "SUBT", "-", "-");
+			System.out.println(instrucoes);
+
+			break;
+		case 151:
+			msg("ACAO: multiplicacao (FEITA)");
+			msg("add MH: MULT");
+
+			MH.IncluirAI(areaInstrucoes, 7, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "MULT", "-", "-");
+			System.out.println(instrucoes);
+
+			break;
+		case 152:
+			System.out.println("ACAO 152: Divisao (FEITA)");
+			System.out.println("add MH: DIVD");
+
+			MH.IncluirAI(areaInstrucoes, 8, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "DIVD", "-", "-");
+			System.out.println(instrucoes);
+
+			break;
+		case 154:
+			msg("ACAO 154: Gera instucao CRCT (FEITA)");
+
+			int valor = Integer.parseInt(tokenAnterior.getLexeme());
+			
+			msg("add MH: [" + areaInstrucoes.LC + ", CRCT, -, " + valor + "]");
+
+			MH.IncluirAI(areaInstrucoes, 3, 0, valor);
+			addInstrucao(areaInstrucoes.LC, "CRCT", "-", valor + "");
+			System.out.println(instrucoes);
+
+			break;
+		case 156:
+			msg("ACAO 156: variavel (FEITA)");
+			msg("seta contexto como EXP");
+
+			contexto = "EXP";
+
 			break;
 		default:
 			break;
-
 		}
 	}
-
 }

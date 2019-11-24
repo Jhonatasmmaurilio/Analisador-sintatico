@@ -67,7 +67,7 @@ public class TabelaSimbolos {
 	}
 
 	public static Simbolo buscar(String nome) {
-		System.out.println("BUSCAR: " + nome);
+		System.out.println("buscando por simbolo:  " + nome);
 
 		int indice = Hashing(nome);
 

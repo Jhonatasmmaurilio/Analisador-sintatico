@@ -1,5 +1,8 @@
 program teste;
-var a :integer;
-begin
-	writeln("123a%$&¨@*#");
+	var i : Integer;
+Begin
+	For i := 1 To 10 Do
+		Begin
+		Writeln(20);
+	end;
 end.

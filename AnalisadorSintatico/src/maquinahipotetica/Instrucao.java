@@ -45,6 +45,6 @@ public class Instrucao {
 
 	@Override
 	public String toString() {
-		return index + " | " + instrucao + " | " + op1 + " | " + op2;
+		return "\n" + index + " | " + instrucao + " | " + op1 + " | " + op2;
 	}
 }

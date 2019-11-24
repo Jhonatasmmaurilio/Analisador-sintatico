@@ -134,12 +134,12 @@ public class Sintatico {
 					throw new SintaticoException(ParserConstants.PARSER_ERROR[x]);
 				}
 			} else if(x > Constants.FIRST_SEMANTIC_ACTION) {
-				System.out.println("**********************************\nAcao semantica encontrada");
+				System.out.println("==================================");
 
 				try {
 					semantico.AnaliseSemantica(x, tokenAtual, tokenAnterior);
 				} catch (SemanticoExepition e) {
-					System.out.println("ERRO SEMANTICO");
+					System.out.println("xxxxxxxxxxxxxxxxxxERRO SEMANTICOxxxxxxxxxxxxxxxxxxx");
 				}
 				
 			} else {
