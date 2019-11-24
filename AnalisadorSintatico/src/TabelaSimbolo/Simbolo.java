@@ -1,4 +1,4 @@
-package token;
+package TabelaSimbolo;
 
 public class Simbolo {
 	private String nome;

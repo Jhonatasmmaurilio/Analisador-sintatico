@@ -1,6 +1,4 @@
-package listaEncadeada;
-
-import token.Simbolo;
+package TabelaSimbolo;
 
 public class ListaEncadeada {
 	private Simbolo primeiro;

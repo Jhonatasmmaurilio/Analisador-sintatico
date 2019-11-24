@@ -4,6 +4,10 @@ public class Token {
 	private String lexeme;
 	private int position;
 
+	public void setLexeme(String lexeme) {
+		this.lexeme = lexeme;
+	}
+
 	public Token(int id, String lexeme, int position) {
 		this.id = id;
 		this.lexeme = lexeme;
@@ -15,7 +19,7 @@ public class Token {
 	}
 
 	public final String getLexeme() {
-		return lexeme;
+		return this.lexeme;
 	}
 
 	public final int getPosition() {

@@ -1,6 +1,4 @@
-package token;
-
-import listaEncadeada.ListaEncadeada;
+package TabelaSimbolo;
 
 public class TabelaSimbolos {
 	private static ListaEncadeada[] ts;
@@ -19,7 +17,7 @@ public class TabelaSimbolos {
 		if (posicao == 1) {
 			ts[indice] = le;
 			ts[indice].setPrimeiro(s);
-			System.out.println(s.getNome() + " inserido");
+			System.out.println("[" + s.getNome() + "] inserido");
 			totalInseridos++;
 		} else {
 			System.out.println("Colisão detectada<<<<<");
@@ -36,10 +34,10 @@ public class TabelaSimbolos {
 
 			ts[indice].setUltimo(aux.getProximo());
 
-			System.out.println(s.getNome() + " inserido");
+			System.out.println("[" + s.getNome() + "] inserido");
 		}
 
-		System.out.println("-------------------------");
+//		System.out.println("-------------------------");
 	}
 
 	public static int Hashing(String nome) {
@@ -71,35 +69,31 @@ public class TabelaSimbolos {
 	public static Simbolo buscar(String nome) {
 		System.out.println("BUSCAR: " + nome);
 
-		if (totalInseridos > 0) {
-			int indice = Hashing(nome);
+		int indice = Hashing(nome);
 
-			if (ts[indice] != null) {
-				Simbolo el = ts[indice].getPrimeiro();
+		if (ts[indice] != null) {
+			Simbolo el = ts[indice].getPrimeiro();
 
-				if (el.getNome().equals(nome)) {
-					System.out.println("Item encontrado");
-					return ts[indice].getPrimeiro();
-				} else {
-					while (el.getProximo() != null) {
-						el = el.getProximo();
+			if (el.getNome().equals(nome)) {
+				System.out.println("Item encontrado");
+				return ts[indice].getPrimeiro();
+			} else {
+				while (el.getProximo() != null) {
+					el = el.getProximo();
 
-						if (el.getNome().equals(nome)) {
-							System.out.println("Item encontrado");
-							return el;
-						}
+					if (el.getNome().equals(nome)) {
+						System.out.println("Item encontrado");
+						return el;
 					}
 				}
-			} else {
-				System.out.println("Nenhum resultado encontrado\n");
-				return null;
 			}
 		} else {
-			System.out.println("Nenhum item inserido até o momento\n");
+			System.out.println("Nenhum resultado encontrado");
+			return null;
 		}
 
 		System.out.println("Nenhum item encontrado");
-		System.out.println("---------------------------");
+//		System.out.println("---------------------------");
 		return null;
 	}
 
@@ -163,7 +157,7 @@ public class TabelaSimbolos {
 	public static void InicializarTabela(int tamanho) {
 		ts = new ListaEncadeada[tamanho];
 		System.out.println("Tabela inicializada com tamanho:" + tamanho);
-		System.out.println("--------------------------------");
+//		System.out.println("--------------------------------");
 	}
 
 	public static void MostrarTabela() {

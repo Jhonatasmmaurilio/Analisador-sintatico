@@ -1,4 +1,4 @@
-package token;
+package sintatico;
 public interface ParserConstants
 {
     int START_SYMBOL = 46;

@@ -1,38 +1,50 @@
 package maquinahipotetica;
 
 public class Instrucao {
-	public int codigo; 
-	public int op1;
-	public int op2;
-	
-	public Instrucao(int codigo, int op1, int op2) {
+	public String index, instrucao, op1, op2;
+
+	public Instrucao(String index, String instrucao, String op1, String op2) {
 		super();
-		this.codigo = codigo;
+		this.index = index;
+		this.instrucao = instrucao;
 		this.op1 = op1;
 		this.op2 = op2;
 	}
-	
-	public int getCodigo() {
-		return codigo;
+
+	public String getIndex() {
+		return index;
 	}
-	public void setCodigo(int codigo) {
-		this.codigo = codigo;
+
+	public void setIndex(String index) {
+		this.index = index;
 	}
-	public int getOp1() {
+
+	public String getInstrucao() {
+		return instrucao;
+	}
+
+	public void setInstrucao(String instrucao) {
+		this.instrucao = instrucao;
+	}
+
+	public String getOp1() {
 		return op1;
 	}
-	public void setOp1(int op1) {
+
+	public void setOp1(String op1) {
 		this.op1 = op1;
 	}
-	public int getOp2() {
+
+	public String getOp2() {
 		return op2;
 	}
-	public void setOp2(int op2) {
+
+	public void setOp2(String op2) {
 		this.op2 = op2;
 	}
-	
+
 	@Override
 	public String toString() {
-		return "instrucoes [codigo=" + codigo + ", op1=" + op1 + ", op2=" + op2 + "]";
+		return index + " | " + instrucao + " | " + op1 + " | " + op2;
 	}
 }

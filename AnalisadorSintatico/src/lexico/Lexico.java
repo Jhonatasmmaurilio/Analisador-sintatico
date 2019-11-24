@@ -1,7 +1,7 @@
 package lexico;
 
+import sintatico.Constants;
 import sintatico.Sintatico;
-import token.Constants;
 import token.Token;
 
 public class Lexico implements Constants {
@@ -59,7 +59,7 @@ public class Lexico implements Constants {
 		Sintatico s = new Sintatico();
 		
 		
-		System.out.println(s.getNomeToken(token) + token);
+//		System.out.println(s.getNomeToken(token) + token);
 
 		if (token == 0)
 			return nextToken();
