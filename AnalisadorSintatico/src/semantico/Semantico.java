@@ -18,38 +18,15 @@ public class Semantico {
 	public static AreaInstrucoes areaInstrucoes;
 	public static AreaLiterais areaLiterais;
 
-	public static Stack<Integer> pilhaIf;
-	public static Stack<Integer> pilhaWhile;
-	public static Stack<Integer> pilhaRepeat;
-	public static Stack<Integer> pilhaProcedure;
-	public static Stack<Integer> pilhaCase;
-	public static Stack<Integer> pilhaFor;
-	public static Stack<Simbolo> pilhaParametros;
+	public static Stack<Integer> pilhaIf, pilhaWhile, pilhaRepeat, pilhaProcedure, pilhaCase, pilhaFor;
+	public static Stack<Simbolo>pilhaParametros;
 
-	public static Simbolo identificador;
-	public static Simbolo procedureAtual;
-	public static Simbolo simbolo;
+	public static Simbolo identificador, procedureAtual, simbolo, simbolo137, simbolo139, simbolo140;
 
-	public static String tipoIdentificador;
-	public static String nIdentificador;
-	public static String contexto;
-	public static String token;
-	public static String nomeIdentificador;
-	public static String nomeProcedure;
+	public static String tipoIdentificador, nIdentificador, contexto, token, nomeIdentificador, nomeProcedure;
 
-	public static int endereco;
-	public static int nivelAtual;
-	public static int totalVariavel;
-	public static int deslocamento;
-	public static int n;// nao sei pra que serve
-	public static int nivel;
-	public static int totalParametro;
-	public static int enderecoA;
-	public static int ptLivre;
-	public static int escopo;
-	public static int lc;
-	public static int lit;
-	public static int geralA;
+	public static int endereco,  nivelAtual, totalVariavel,  deslocamento, nivel, totalParametro, enderecoA, escopo;
+	public static int geralA, geralA137, nivel137, nivel114, nivel140, geralA140, posicao139;
 
 	public static boolean temParametro;
 
@@ -64,10 +41,9 @@ public class Semantico {
 	@SuppressWarnings("static-access")
 	public void AnaliseSemantica(int acao, Token token, Token tokenAnterior) throws SemanticoExepition {
 		msg("x = " + (acao - 77));
-		msg("------------------------");
-		msg("token atual: [" + token.getLexeme() + "]");
-		msg("token anterior: [" + tokenAnterior.getLexeme() + "]");
-		msg("------------------------");
+		msg(">>>token atual: [" + token.getLexeme() + "]");
+		msg(">>>token anterior: [" + tokenAnterior.getLexeme() + "]\n");
+
 
 		switch (acao - 77) {
 
@@ -96,12 +72,12 @@ public class Semantico {
 			pilhaParametros = new Stack();
 
 			nivelAtual = 0;
-			ptLivre = 1;
+//			ptLivre = 1;
 			escopo = 1;
 			totalVariavel = 0;
 			deslocamento = 3;
-			lc = 1;
-			lit = 1;
+//			lc = 1;
+//			lit = 1;
 
 			break;
 		case 101:
@@ -115,9 +91,6 @@ public class Semantico {
 			break;
 		case 102:
 			msg("ACAO: 102 - apos declaracao de variavel (FEITA)");
-			msg("add MH: AMEN");
-			msg("tabela instruao");
-			msg(instrucoes.toString());
 			msg("deslocamento: " + deslocamento);
 			msg("totalVariavel: " + totalVariavel);
 
@@ -125,7 +98,9 @@ public class Semantico {
 
 			MH.IncluirAI(areaInstrucoes, 24, 0, (deslocamento + totalVariavel));
 			addInstrucao(areaInstrucoes.LC, "AMEN", "-", (deslocamento + totalVariavel) + "");
-
+			msg("add MH: [" + areaInstrucoes.LC + ", AMEN, - ," + (deslocamento + totalVariavel) + "");
+			msg(instrucoes + "");
+			
 			break;
 		case 103:
 			msg("ACAO: 103 - seta identificador para rotulo (FEITA)");
@@ -174,7 +149,6 @@ public class Semantico {
 					msg("[" + tokenAnterior.getLexeme() + "] inserido na TS");
 					msg("totalVariaveis: " + totalVariavel);
 					msg("deslocamento: " + deslocamento);
-					System.out.println(instrucoes);
 				} else {
 					if (s.getNivel() != nivelAtual) {
 						ts.inserir(tokenAnterior.getLexeme(), "VAR", nivelAtual, "0", "-");
@@ -222,19 +196,20 @@ public class Semantico {
 			break;
 		case 105:
 			msg("ACAO 105: reconhece nome CONSTANTE (FEITA)");
-			
+
 			identificador = ts.buscar(tokenAnterior.getLexeme());
 
 			if (identificador == null) {
 				msg("constante ainda não declarada");
-				
+
 				ts.inserir(tokenAnterior.getLexeme(), "CONSTANTE", nivelAtual, "-", "-");
 				identificador = ts.buscar(tokenAnterior.getLexeme());
 			} else {
 				identificador = null;
 				msg("Constatnte " + tokenAnterior.getLexeme() + " ja foi declarada");
-				
-				throw new SemanticoExepition("Erro semantico: Constante " + tokenAnterior.getLexeme() + " ja foi declarada");
+
+				throw new SemanticoExepition(
+						"Erro semantico: Constante " + tokenAnterior.getLexeme() + " ja foi declarada");
 			}
 
 			break;
@@ -360,11 +335,11 @@ public class Semantico {
 
 					throw new SemanticoExepition("Erro semantico: " + nomeIdentificador + " não é uma variável");
 				} else {
-					n = nivelAtual - simboloVar.getNivel();
+					nivel114 = nivelAtual - simboloVar.getNivel();
 
 					geralA = Integer.parseInt(simboloVar.getGeralA());
 
-					msg("nivel atual - nivel do simbolo: " + n);
+					msg("nivel atual - nivel do simbolo: " + nivel114);
 					msg("geralA: " + geralA);
 				}
 
@@ -376,10 +351,10 @@ public class Semantico {
 			break;
 		case 115:
 			msg("ACAO: Apos expressao atribuicao (FEITA)");
-			msg("add MH: ARMZ" + ", " + n + ", " + geralA);
+			msg("add MH: ARMZ" + ", " + nivel114 + ", " + geralA);
 
-			MH.IncluirAI(areaInstrucoes, 4, n, geralA);
-			addInstrucao(areaInstrucoes.LC, "ARMZ", n + "", geralA + "");
+			MH.IncluirAI(areaInstrucoes, 4, nivel114, geralA);
+			addInstrucao(areaInstrucoes.LC, "ARMZ", nivel114 + "", geralA + "");
 			System.out.println(instrucoes);
 
 			break;
@@ -403,56 +378,56 @@ public class Semantico {
 			msg("add MH:[" + (areaInstrucoes.LC + 1) + " DVSF, -, ?]");
 
 			pilhaIf.push(areaInstrucoes.LC);
-			
+
 			msg("pilhaIf" + pilhaIf);
-			
+
 			MH.IncluirAI(areaInstrucoes, 20, -1, -1);
 			addInstrucao(areaInstrucoes.LC, "DVSF", "-", "?");
-			
+
 			System.out.println(instrucoes);
 
 			break;
 		case 121:
 			msg("ACAO 121: Encontrou ELSE (FEITA)");
 			msg("pilhaIf: " + pilhaIf);
-			
+
 			int posicao1 = pilhaIf.pop();
-			
+
 			msg("topo da pilaIf: " + posicao1);
 			msg("busca instrucao: " + posicao1);
 
 			msg(instrucoes.get(posicao1) + "");
-			
+
 			instrucoes.get(posicao1).setOp2(areaInstrucoes.LC + 1 + "");
 			MH.AlterarAI(areaInstrucoes, posicao1, 0, areaInstrucoes.LC);
-			
+
 			System.out.println("completa DSVS gerada no #122");
 			msg("seta desvio para instrucao: " + (areaInstrucoes.LC + 1));
 			msg(instrucoes + "");
-			
+
 			break;
 		case 122:
 			msg("ACAO 122: Encontrou ELSE (FEITA)");
 			msg("pilhaIf: " + pilhaIf);
-			
+
 			int posicao2 = pilhaIf.pop();
 
 			msg("topo da pilhaIF: " + (posicao2));
 			msg("busca pela instrucao: " + (posicao2));
 			msg(instrucoes.get(posicao2 - 1) + "");
-			
+
 			instrucoes.get(posicao2 - 1).setOp2((areaInstrucoes.LC + 1) + "");
-			
+
 			msg("seta o valor ? do ELSE");
-			msg(instrucoes.get(posicao2 - 1)+ "");
-			
+			msg(instrucoes.get(posicao2 - 1) + "");
+
 			MH.AlterarAI(areaInstrucoes, posicao2, 0, areaInstrucoes.LC + 1);
-			
+
 			pilhaIf.push(areaInstrucoes.LC);
-			
+
 			MH.IncluirAI(areaInstrucoes, 19, 0, 0);
 			addInstrucao(areaInstrucoes.LC, "DSVS", "-", "?");
-			
+
 			msg("altera na MH");
 			msg("resolve DSVF de #120");
 			msg("add MH: [" + areaInstrucoes.LC + ", DSVF" + ", -, - ]");
@@ -461,49 +436,49 @@ public class Semantico {
 		case 123:
 			msg("ACAO 123: WHILE antes da expressao (FEITA)");
 			msg("insere na pilha while:" + areaInstrucoes.LC);
-			
+
 			pilhaWhile.push(areaInstrucoes.LC);
 
 			msg("pilhaWhile: " + pilhaWhile);
 			break;
 		case 124:
 			msg("ACAO: WHILE depois da expresao (FEITA)");
-			
-			addInstrucao(areaInstrucoes.LC,"DVSF","-","?");
-			
+
+			addInstrucao(areaInstrucoes.LC, "DVSF", "-", "?");
+
 			pilhaWhile.push(areaInstrucoes.LC);
 			msg("add pilhaWhile: " + areaInstrucoes.LC);
 			msg("pilhaWhile: " + pilhaWhile);
-			
+
 			MH.IncluirAI(areaInstrucoes, 20, 0, 0);
 			msg("add MH: [" + areaInstrucoes.LC + ", DSVF, -, ?");
 
 			break;
 		case 125:
 			System.out.println("ACAO 125: WHILE (FEITA)");
-		
+
 			msg("pilhaWhile: " + pilhaWhile);
 			int posicao3 = pilhaWhile.pop();
 			msg("topo pilha: " + posicao3);
-			
-			MH.AlterarAI(areaInstrucoes,posicao3 , 0, areaInstrucoes.LC+1);
+
+			MH.AlterarAI(areaInstrucoes, posicao3, 0, areaInstrucoes.LC + 1);
 			msg("altera MH");
-			
+
 			msg("intrução na posição: " + posicao3);
 			msg(instrucoes.get(posicao3) + "");
-			
+
 			instrucoes.get(posicao3).setOp2((areaInstrucoes.LC + 1) + "");
-			
+
 			msg(instrucoes.get(posicao3) + "");
-			
+
 			int aux = pilhaWhile.pop();
-			
+
 			msg("topo pilhaWhile: " + aux);
 			msg("pilhaWhila: " + pilhaWhile);
-			
-			addInstrucao(areaInstrucoes.LC,"DSVS", "-",""+(aux));
-			MH.IncluirAI(areaInstrucoes, 19, 0,aux);
-			
+
+			addInstrucao(areaInstrucoes.LC, "DSVS", "-", "" + (aux));
+			MH.IncluirAI(areaInstrucoes, 19, 0, aux);
+
 			msg("add MH: [" + areaInstrucoes.LC + ", DSVS, - , " + aux);
 			break;
 		case 128:
@@ -609,18 +584,131 @@ public class Semantico {
 			break;
 		case 137:
 			msg("ACAO: apos variavel FOR (FEITA)");
-			
-			Simbolo s1 = ts.buscar(tokenAnterior.getLexeme());
-			
-			if(s1 == null || !s1.getCategoria().equals("VAR")) {
+
+			simbolo137 = ts.buscar(tokenAnterior.getLexeme());
+
+			if (simbolo137 == null || !simbolo137.getCategoria().equals("VAR")) {
 				msg("Não encontrada ou não e do tipo VAR");
-				
-				throw new SemanticoExepition(tokenAnterior.getLexeme() + " não foi declarado ou não é nome de variável");
-			}else {
-				n = s1.getNivel();
-				
-				System.out.println("n = " + n);
+
+				throw new SemanticoExepition(
+						tokenAnterior.getLexeme() + " não foi declarado ou não é nome de variável");
+			} else {
+				nivel137 = simbolo137.getNivel();
+
+				System.out.println("nivel137 = " + nivel137);
 			}
+			break;
+		case 138:
+			msg("ACAO 138:  Após expressão valor inicial (FEITA)");
+
+			int geralA137 = Integer.parseInt(simbolo137.getGeralA());
+
+			MH.IncluirAI(areaInstrucoes, 4, nivel137, geralA137);
+			addInstrucao(areaInstrucoes.LC, "ARMZ", nivel137 + "", geralA137 + "");
+
+			msg("add MH: [" + areaInstrucoes.LC + ", ARMZ, " + nivel137 + ", " + geralA137 +"]");
+
+			msg("geralA de " + simbolo137.getNome() + ": " + geralA137);
+
+			break;
+		case 139:
+			msg("ACAO 139: Após expressão – valor final (FEITA)");
+			
+			//guarda inicio COPY
+			MH.IncluirAI(areaInstrucoes, 28, 0, 1); 	
+			addInstrucao(areaInstrucoes.LC, "COPI", "-", "-");
+			msg("add MH: [" + areaInstrucoes.LC + ", COPI, - , - ]");
+			pilhaFor.push(areaInstrucoes.LC);
+			msg("insere na pilhaFor: " + areaInstrucoes.LC);
+			msg("pilhaFor: " + pilhaFor);
+			
+			msg("simbolo: " + simbolo137.getNome());
+			nivel137 = simbolo137.getNivel() - nivelAtual;
+			msg("nivel: " + nivel137);
+			
+			geralA137 = Integer.parseInt(simbolo137.getGeralA());
+			msg("geralA: " + geralA137);
+			
+			MH.IncluirAI(areaInstrucoes, 2, nivel137, geralA137);
+			addInstrucao(areaInstrucoes.LC, "CRVL", nivel137+"",""+ geralA137);	
+			msg("add MH: [" + areaInstrucoes.LC + ", CRVL, " + nivel137 + ", " + geralA137 + "]");
+			
+			MH.IncluirAI(areaInstrucoes, 18, 0, 0);
+			addInstrucao(areaInstrucoes.LC,"CMAI","-","-");
+			msg("add MH: [" + areaInstrucoes.LC + ", " + "CMAI, - , - ]");
+			
+			MH.IncluirAI(areaInstrucoes, 20,0, 0);		
+			addInstrucao(areaInstrucoes.LC,"DVSF","-","?");
+			msg("add MH: [" + areaInstrucoes.LC + ", DSVF, - , ? ]");
+			
+			pilhaFor.push(areaInstrucoes.LC);
+			msg("add pilhaFor: " + areaInstrucoes.LC);
+			msg("pilhaFor: " + pilhaFor);
+			
+			simbolo139 = simbolo137;
+			posicao139 = areaInstrucoes.LC;
+
+			msg("guarda simbolo: " + simbolo139.getNome());
+//			msg("guarda posicao LC: " + posicao139);
+			
+			break;
+		case 140:
+			msg("ACAO 140: Após comando em FOR (FEITA)");
+
+//			msg("pilhaFor: " + pilhaFor);
+//			int posicao140 = pilhaFor.pop();
+//			msg("topo pilha: " + posicao140);
+			
+			nivel140 = simbolo139.getNivel() - nivelAtual;
+			msg("nivel: " + nivel140);
+			
+			msg(simbolo139.getNome() + " geralA: " + simbolo139.getGeralA());
+			geralA140 = Integer.parseInt(simbolo139.getGeralA());
+			msg("geralA: " + geralA140);
+			
+			MH.IncluirAI(areaInstrucoes, 2, nivel140, geralA140);
+			addInstrucao(areaInstrucoes.LC, "CRVL", nivel140+"", geralA140+"");
+			msg("add MH: [" + areaInstrucoes.LC + ", CRVL, " + nivel140 + ", " + geralA140+"]");
+			
+			MH.IncluirAI(areaInstrucoes, 3, 0, 1);
+			addInstrucao(areaInstrucoes.LC,"CRCT","-","1");
+			msg("add MH: [" + areaInstrucoes.LC + ", CRCT, - , 1 ]");
+			
+			MH.IncluirAI(areaInstrucoes, 5,0, 0);
+			addInstrucao(areaInstrucoes.LC,"SOMA","-","-");
+			msg("add MH: [" + areaInstrucoes.LC + ", SOMA, - , - ]");
+			
+			MH.IncluirAI(areaInstrucoes, 4, nivel140, geralA140);
+			addInstrucao(areaInstrucoes.LC,"ARMZ",nivel140+"",geralA140+"");
+			msg("add MH: [" + areaInstrucoes.LC + ", ARMZ, " + nivel140 + ", " + geralA140 + "]");
+			
+			//resolve retorno do DSVF do FOR
+			msg("pilhaFor: " + pilhaFor);
+			int posicao140 = pilhaFor.pop();
+			msg("pilhaFor: " + posicao140);
+			
+			MH.IncluirAI(areaInstrucoes, 19, 0,(0));
+			addInstrucao(areaInstrucoes.LC,"DSVS", "-",""+(0));
+			msg("add MH: [" + areaInstrucoes.LC + ", DSVS, - ," + (0) + "]");
+			
+			MH.AlterarAI(areaInstrucoes, posicao140-1 , -1, areaInstrucoes.LC+1);
+			msg(instrucoes.get(posicao140-1) + "");
+			instrucoes.get(posicao140-1).setOp2((areaInstrucoes.LC + 1) + "");
+			msg(instrucoes.get(posicao140-1) + "");
+			
+			posicao140 = pilhaFor.pop();
+			msg(posicao140 + "");
+			
+			MH.AlterarAI(areaInstrucoes, areaInstrucoes.LC, -1, posicao140);
+			msg(instrucoes.get(areaInstrucoes.LC - 1) + "");
+			instrucoes.get(areaInstrucoes.LC - 1).setOp2(posicao140 + "");
+			msg(instrucoes.get(areaInstrucoes.LC - 1) + "");
+			
+			MH.IncluirAI(areaInstrucoes, 24, 0, -1);
+			addInstrucao(areaInstrucoes.LC,"AMEN", "-","-1");
+			msg("add MH: [" + areaInstrucoes.LC + ", AMEN, - , -1");
+			
+			System.out.println(instrucoes);
 			
 			break;
 		case 143:
@@ -672,7 +760,7 @@ public class Semantico {
 			msg("ACAO 154: Gera instucao CRCT (FEITA)");
 
 			int valor = Integer.parseInt(tokenAnterior.getLexeme());
-			
+
 			msg("add MH: [" + areaInstrucoes.LC + ", CRCT, -, " + valor + "]");
 
 			MH.IncluirAI(areaInstrucoes, 3, 0, valor);
