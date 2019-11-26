@@ -39,11 +39,10 @@ public class Semantico {
 	}
 
 	@SuppressWarnings("static-access")
-	public void AnaliseSemantica(int acao, Token token, Token tokenAnterior) throws SemanticoExepition {
+	public void AnaliseSemantica(int acao, Token token, Token tokenAnterior, Token tokenAntPenultimo) throws SemanticoExepition {
 		msg("x = " + (acao - 77));
 		msg(">>>token atual: [" + token.getLexeme() + "]");
 		msg(">>>token anterior: [" + tokenAnterior.getLexeme() + "]\n");
-
 
 		switch (acao - 77) {
 
@@ -455,7 +454,7 @@ public class Semantico {
 
 			break;
 		case 125:
-			System.out.println("ACAO 125: WHILE (FEITA)");
+			msg("ACAO 125: WHILE (FEITA)");
 
 			msg("pilhaWhile: " + pilhaWhile);
 			int posicao3 = pilhaWhile.pop();
@@ -480,6 +479,21 @@ public class Semantico {
 			MH.IncluirAI(areaInstrucoes, 19, 0, aux);
 
 			msg("add MH: [" + areaInstrucoes.LC + ", DSVS, - , " + aux);
+			break;
+		case 126:
+			msg("ACAO 126:  Comando REPEAT – início (FEITA)");
+			pilhaRepeat.push(areaInstrucoes.LC);
+			msg("pilhaRepeat: " + pilhaRepeat);
+			
+			break;
+		case 127:
+			msg("ACAO 127:  Comando REPEAT – fim (FEITA)");
+			int repeat126 = pilhaRepeat.pop() + 1;
+			
+			MH.IncluirAI(areaInstrucoes, 20, 0, repeat126);
+			addInstrucao(areaInstrucoes.LC, "DVSF", "-", repeat126 + "");
+			msg(instrucoes + "");
+			
 			break;
 		case 128:
 			msg("ACAO 128: READLN (FEITA)");
@@ -517,7 +531,7 @@ public class Semantico {
 						msg("diferenca de nivel: " + nivelA);
 						msg("endereco relativo: " + geralA);
 						msg("inclui instrucao ARMZ na MH");
-						System.out.println(instrucoes);
+						msg(instrucoes + "");
 					} else {
 						msg("Simbolo [" + tokenAnterior.getLexeme() + "] não é do tipo variável");
 
@@ -553,6 +567,8 @@ public class Semantico {
 						msg("carrega valor na pilha");
 						msg("index geralA:" + deslocamento);
 						msg("add MH: CRVL");
+						
+						msg(instrucoes + "");
 					}
 				}
 			} else {
@@ -569,8 +585,8 @@ public class Semantico {
 
 			MH.IncluirAL(areaLiterais, tokenAnterior.getLexeme());
 			MH.IncluirAI(areaInstrucoes, 23, 0, areaLiterais.LIT - 1);
-			addInstrucao(areaInstrucoes.LC, "IMPL", "0", (areaLiterais.LIT) + "");
-			System.out.println(instrucoes);
+			addInstrucao(areaInstrucoes.LC, "IMPL", "-", (areaLiterais.LIT - 1) + "");
+			msg(instrucoes + "");
 
 			break;
 		case 131:
@@ -581,6 +597,110 @@ public class Semantico {
 			addInstrucao(areaInstrucoes.LC, "IMPR", "-", "-");
 			System.out.println(instrucoes);
 
+			break;
+		case 132:
+			msg("ACAO 132: : Após palavra reservada CASE (FEITA)");
+			msg("inicio do case");
+			
+			pilhaCase.push(areaInstrucoes.LC);
+			msg("pilhaCase: " + pilhaCase);
+			
+			break;
+		case 133:
+			msg("ACAO 133:  Após comando CASE (FEITA)");
+			
+			msg("pilhaCase: " + pilhaCase);
+			int aux133 = pilhaCase.pop() - 1;
+			
+			msg(instrucoes.get(aux133) + "");
+			MH.AlterarAI(areaInstrucoes, aux133, 0, areaInstrucoes.LC);
+			instrucoes.get(aux133).setOp2(areaInstrucoes.LC + "");
+			msg(instrucoes.get(aux133) + "");
+			
+			MH.IncluirAI(areaInstrucoes, 24, 0, -1);
+			addInstrucao(areaInstrucoes.LC,"AMEN", "-","-1");
+			msg("add MH: [" + areaInstrucoes.LC + ", AMEN, - , -1");
+			
+			break;
+		case 134:
+			msg("ACAO 134:  Ramo do CASE após inteiro, último da lista (FEITA)");
+			
+			MH.IncluirAI(areaInstrucoes, 28, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "COPI", "-", "-");
+			msg("gera instrução COPI");
+
+			MH.IncluirAI(areaInstrucoes, 3, 0, Integer.parseInt(tokenAntPenultimo.getLexeme()));
+			addInstrucao(areaInstrucoes.LC, "CRCT", "-", tokenAntPenultimo.getLexeme() + "");
+			msg("gera instrução CRCT");
+			
+			MH.IncluirAI(areaInstrucoes, 15, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "CMIG", "-", "-");
+			msg("gera instrução CMIG");
+			
+			if(!pilhaCase.isEmpty()) {
+				msg("resolvendo desvio");
+				int desvioCase134 = pilhaCase.pop()-1;
+				
+				msg(instrucoes.get(desvioCase134) + "");
+				MH.AlterarAI(areaInstrucoes, desvioCase134 - 1, 0, areaInstrucoes.LC + 2);
+				instrucoes.get(desvioCase134).setOp2((areaInstrucoes.LC + 2) + "");
+				msg(instrucoes.get(desvioCase134) + "");
+			}
+
+			MH.IncluirAI(areaInstrucoes, 20, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "DSVF", "-", "?");
+			msg("gera instrução DSVF");
+			
+			pilhaCase.push(areaInstrucoes.LC);
+			msg("pilhaCase: " + pilhaCase);
+			
+			msg(instrucoes + "");
+			
+			break;
+		case 135:
+			msg("ACAO 135:  Após comando em CASE (FEITA)33333333333333333333333333333");
+			
+			msg("pilhaCase: " + pilhaCase);
+			int desvioCase135 = pilhaCase.pop() - 1;
+			
+			msg(instrucoes.get(desvioCase135) + "");
+			MH.AlterarAI(areaInstrucoes, desvioCase135, 0, (areaInstrucoes.LC + 1));
+			instrucoes.get(desvioCase135).setOp2((areaInstrucoes.LC + 1) + "");
+			msg(instrucoes.get(desvioCase135) + "");			
+			
+			MH.IncluirAI(areaInstrucoes, 20, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "DSVF", "-", "?");
+			msg("gera instrução DSVF");
+			
+			pilhaCase.push(areaInstrucoes.LC);
+			msg("pilhaCase: " + pilhaCase);
+			
+			break;
+		case 136:
+			msg("ACAO 136: Ramo do CASE: após inteiro (FEITA)11111111111111111111111111");
+			
+			MH.IncluirAI(areaInstrucoes, 28, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "COPI", "-", "-");
+			msg("gera instrução COPI");
+			
+			MH.IncluirAI(areaInstrucoes, 3, 0, Integer.parseInt(tokenAntPenultimo.getLexeme()));
+			addInstrucao(areaInstrucoes.LC, "CRCT", "-", tokenAntPenultimo.getLexeme() + "");
+			msg("gera instrução CRCT");
+			
+			MH.IncluirAI(areaInstrucoes, 15, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "CMIG", "-", "-");
+			msg("gera instrução CMIG");
+			
+			MH.IncluirAI(areaInstrucoes,29, 0, 0);
+			addInstrucao(areaInstrucoes.LC, "DSVT", "-", "?");
+			msg("gera instrução DSVT");
+			
+			pilhaCase.push(areaInstrucoes.LC);
+			
+			msg(instrucoes + "");
+			
+			msg("pilhaCase: " + pilhaCase);
+			
 			break;
 		case 137:
 			msg("ACAO: apos variavel FOR (FEITA)");
@@ -739,7 +859,7 @@ public class Semantico {
 
 			break;
 		case 151:
-			msg("ACAO: multiplicacao (FEITA)");
+			msg("ACAO 151: multiplicacao (FEITA)");
 			msg("add MH: MULT");
 
 			MH.IncluirAI(areaInstrucoes, 7, 0, 0);

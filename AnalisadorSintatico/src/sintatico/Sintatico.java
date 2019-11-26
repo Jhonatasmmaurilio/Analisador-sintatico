@@ -16,6 +16,7 @@ public class Sintatico {
 	private boolean compilado = false;
 	private Token tokenAtual;
 	private Token tokenAnterior;
+	private Token tokenAntPenultimo;
 	private Label lt;
 	private Label ll;
 	private Label le;
@@ -137,7 +138,7 @@ public class Sintatico {
 				System.out.println("==================================");
 
 				try {
-					semantico.AnaliseSemantica(x, tokenAtual, tokenAnterior);
+					semantico.AnaliseSemantica(x, tokenAtual, tokenAnterior, tokenAntPenultimo);
 				} catch (SemanticoExepition e) {
 					System.out.println("xxxxxxxxxxxxxxxxxxERRO SEMANTICOxxxxxxxxxxxxxxxxxxx");
 				}
@@ -186,6 +187,7 @@ public class Sintatico {
 
 	private boolean comparaTokens(int x, int a) {
 		try {
+			tokenAntPenultimo = tokenAnterior;
 			tokenAnterior = tokenAtual;
 			tokenAtual = listaTokens.nextToken();
 
